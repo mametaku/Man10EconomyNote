@@ -9,7 +9,7 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import red.man10.man10vaultapiplus.JPYBalanceFormat
+import red.man10.man10economynote.vault.JPYBalanceFormat
 import java.util.*
 
 /**
@@ -111,8 +111,8 @@ class OPChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
     }
 
     internal inner class ChequeResult(id: Int, memo: Boolean) {
-        val memo = false
-        val id = -1
+        var memo = false
+        var id = -1
 
         init {
             this.memo = memo

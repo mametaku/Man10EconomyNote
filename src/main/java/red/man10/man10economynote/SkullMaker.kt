@@ -84,7 +84,7 @@ class SkullMaker {
                 ),
                 propertyMap,
                 "textures",
-                Reflection.newInstance(Reflection.getDeclaredConstructor(propertyClass, String::class.java, String::class.java), "textures", String(encodedData))
+                Reflection.newInstance(Reflection.getDeclaredConstructor(propertyClass, String::class.java, String::class.java), "textures", String(encodedData))!!
         )
         Reflection.setField("profile", meta, profile)
     }

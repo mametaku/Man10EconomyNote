@@ -1,4 +1,4 @@
-package red.man10.man10economynote
+package red.man10.man10economynote.vault
 
 import net.milkbowl.vault.economy.Economy
 import org.bukkit.Bukkit

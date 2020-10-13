@@ -3,11 +3,12 @@ package red.man10.man10economynote
 import org.bukkit.Bukkit
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
+import red.man10.man10economynote.vault.VaultManager
 import java.sql.SQLException
 import java.util.*
 
 class Man10EconomyNote : JavaPlugin() {
-    var mysql: MySQLAPI? = null
+    var mysql: MySQLManager? = null
     var vault: VaultManager? = null
     var inventoryMap = HashMap<UUID?, String?>()
     var noteDataMap = HashMap<UUID?, NoteData?>()
@@ -61,7 +62,7 @@ class Man10EconomyNote : JavaPlugin() {
         getCommand("mviewdebt")!!.setExecutor(ViewDebt(this))
         getCommand("man10economynote")!!.setExecutor(MainCommand(this))
         saveDefaultConfig()
-        mysql = MySQLAPI(this, "Man10EconNote")
+        mysql = MySQLManager(this, "Man10EconNote")
         mysql!!.execute(mainDBQuery)
         mysql!!.execute(logDbQuery)
         var nd: NoteData? = null

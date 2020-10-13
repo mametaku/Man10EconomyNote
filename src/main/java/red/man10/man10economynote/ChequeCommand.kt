@@ -9,6 +9,7 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
+import red.man10.man10economynote.vault.JPYBalanceFormat
 import java.util.*
 
 /**
@@ -45,7 +46,7 @@ class ChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
                     p.sendMessage("§e[§dMan10EconNote§e]§c所持金額が足りません")
                     return false
                 }
-                plugin!!.vault.withdraw(p.uniqueId, i.toDouble(), TransactionType.SEND_CHEQUE, "Created Cheque user:" + p.name + " price:" + i, TransactionLogType.RAW)
+                plugin!!.vault?.withdraw(p.uniqueId, i.toDouble())
                 val res = createChequeData(p.name, p.uniqueId, i, null)
                 val blueDye = ItemStack(Material.BLUE_DYE, 1)
                 val itemMeta = blueDye.itemMeta
@@ -86,7 +87,7 @@ class ChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
                     p.sendMessage("§e[§dMan10EconNote§e]§c所持金額が足りません")
                     return false
                 }
-                plugin!!.vault.takePlayerMoney(p.uniqueId, i.toDouble(), TransactionType.SEND_CHEQUE, "Created Cheque user:" + p.name + " price:" + i, TransactionLogType.RAW)
+                plugin!!.vault?.deposit(p.uniqueId, i.toDouble())
                 val res = createChequeData(p.name, p.uniqueId, i, args[1].replace("'", "\\'"))
                 val blueDye = ItemStack(Material.BLUE_DYE, 1)
                 val itemMeta = blueDye.itemMeta
@@ -96,9 +97,7 @@ class ChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
                 lore.add("")
                 lore.add("§a§l発行者:" + p.name)
                 lore.add("§a§l金額:" + JPYBalanceFormat(i).getString().toString() + "円")
-                if (args[1] != null || !args[1].equals("", ignoreCase = true)) {
-                    lore.add("§d§lメモ:" + args[1].replace("&".toRegex(), "§").replace("_".toRegex(), " "))
-                }
+                lore.add("§d§lメモ:" + args[1].replace("&".toRegex(), "§").replace("_".toRegex(), " "))
                 lore.add("")
                 lore.add("§e==================")
                 itemMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true)
@@ -118,8 +117,8 @@ class ChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
     }
 
     internal inner class ChequeResult(id: Int, memo: Boolean) {
-        val memo = false
-        val id = -1
+        var memo = false
+        var id = -1
 
         init {
             this.memo = memo
