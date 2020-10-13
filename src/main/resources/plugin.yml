@@ -1,0 +1,10 @@
+name: Man10EconomyNote
+version: ${project.version}
+main: red.man10.man10economynote.Man10EconomyNote
+authors: [Sho0]
+commands:
+ mlend:
+ mcheque:
+ mchequeop:
+ mviewdebt:
+ man10economynote:
