@@ -1,59 +1,48 @@
-package red.man10.man10economynote;
+package red.man10.man10economynote
+
+import org.bukkit.Bukkit
+import java.sql.Connection
+import java.sql.DriverManager
+import java.sql.SQLException
+import java.util.logging.Level
 
 /**
  * Created by takatronix on 2017/03/05.
  */
+internal class MySQLFunc(host: String?, db: String?, user: String?, pass: String?, port: String?) {
+    var HOST: String? = null
+    var DB: String? = null
+    var USER: String? = null
+    var PASS: String? = null
+    var PORT: String? = null
+    var con: Connection? = null
+    fun open(): Connection? {
+        try {
+            Class.forName("com.mysql.jdbc.Driver")
+            con = DriverManager.getConnection("jdbc:mysql://" + HOST + ":" + PORT + "/" + DB + "?useSSL=false", USER, PASS)
+            return con
+        } catch (var2: SQLException) {
+            Bukkit.getLogger().log(Level.SEVERE, "Could not connect to MySQL server, error code: " + var2.errorCode)
+        } catch (var3: ClassNotFoundException) {
+            Bukkit.getLogger().log(Level.SEVERE, "JDBC driver was not found in this machine.")
+        }
+        return con
+    }
 
-import org.bukkit.Bukkit;
+    fun checkConnection(): Boolean {
+        return con != null
+    }
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.logging.Level;
+    fun close(c: Connection?) {
+        var c = c
+        c = null
+    }
 
-class MySQLFunc {
-   String HOST = null;
-   String DB = null;
-   String USER = null;
-   String PASS = null;
-   String PORT = null;
-   private Connection con = null;
-
-   public MySQLFunc(String host, String db, String user, String pass,String port) {
-       this.HOST = host;
-       this.DB = db;
-       this.USER = user;
-       this.PASS = pass;
-       this.PORT = port;
-   }
-
-   public Connection open() {
-       try {
-           Class.forName("com.mysql.jdbc.Driver");
-           this.con = DriverManager.getConnection("jdbc:mysql://" + this.HOST + ":" + this.PORT +"/" + this.DB + "?useSSL=false", this.USER, this.PASS );
-           return this.con;
-       } catch (SQLException var2) {
-           Bukkit.getLogger().log(Level.SEVERE, "Could not connect to MySQL server, error code: " + var2.getErrorCode());
-       } catch (ClassNotFoundException var3) {
-           Bukkit.getLogger().log(Level.SEVERE, "JDBC driver was not found in this machine.");
-       }
-
-       return this.con;
-   }
-
-   public boolean checkConnection() {
-       return this.con != null;
-   }
-
-   public void close(Connection c) {
-       c = null;
-   }
-
-   public Connection getCon() {
-       return this.con;
-   }
-
-   public void setCon(Connection con) {
-       this.con = con;
-   }
+    init {
+        HOST = host
+        DB = db
+        USER = user
+        PASS = pass
+        PORT = port
+    }
 }

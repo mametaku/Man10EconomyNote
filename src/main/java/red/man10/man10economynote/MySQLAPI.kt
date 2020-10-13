@@ -1,280 +1,264 @@
-package red.man10.man10economynote;
+package red.man10.man10economynote
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.java.JavaPlugin;
-
-import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
+import org.bukkit.Bukkit
+import org.bukkit.plugin.java.JavaPlugin
+import java.sql.Connection
+import java.sql.ResultSet
+import java.sql.SQLException
+import java.sql.Statement
+import java.text.SimpleDateFormat
+import java.util.*
+import java.util.logging.Level
 
 /**
  * Created by sho-pc on 2017/05/21.
  */
-public class MySQLAPI {
+class MySQLAPI {
+    var debugMode = false
+    private var plugin: JavaPlugin? = null
+    private var HOST: String? = null
 
-    public Boolean debugMode = false;
-    private JavaPlugin plugin;
-    private String HOST = null;
-    private String DB = null;
-    private String USER = null;
-    private String PASS = null;
-    private String PORT = null;
-    private boolean connected = false;
-    private Statement st = null;
-    private Connection con = null;
-    private String conName;
-    private MySQLFunc MySQL;
+    ////////////////////////////////
+    //     行数を数える
+    ////////////////////////////////
+    var dB: String? = null
+        private set
+    var uSER: String? = null
+        private set
+    private var PASS: String? = null
+    private var PORT: String? = null
+    private var connected = false
+    private var st: Statement? = null
+    private var con: Connection? = null
+    private var conName: String
+    private var MySQL: MySQLFunc? = null
 
     ////////////////////////////////
     //      コンストラクタ
     ////////////////////////////////
-    public String getConfirmation(){
-        return "%QltpzRbj$4AFjRSRqAblzrbdiDqAblzs4t$sbRpQ5bqFlbbsVFe3eIbxfbmbIsA";
-    }
+    val confirmation: String
+        get() = "%QltpzRbj$4AFjRSRqAblzrbdiDqAblzs4t\$sbRpQ5bqFlbbsVFe3eIbxfbmbIsA"
+    val mySqlSetting: List<String?>
+        get() {
+            val list: MutableList<String?> = ArrayList()
+            list.add(HOST)
+            list.add(dB)
+            list.add(uSER)
+            list.add(PASS)
+            list.add(PORT)
+            return list
+        }
 
-    public List<String> getMySqlSetting(){
-        List<String> list = new ArrayList<>();
-        list.add(HOST);
-        list.add(DB);
-        list.add(USER);
-        list.add(PASS);
-        list.add(PORT);
-        return list;
-    }
-
-    public MySQLAPI(JavaPlugin plugin, String name) {
-        this.plugin = plugin;
-        this.conName = name;
-        this.connected = false;
-        loadConfig();
-
-        this.connected = Connect(HOST, DB, USER, PASS, PORT);
-
-        if (!this.connected) {
-            plugin.getLogger().info("Unable to establish a MySQL connection.");
+    constructor(plugin: JavaPlugin, name: String) {
+        this.plugin = plugin
+        conName = name
+        connected = false
+        loadConfig()
+        connected = Connect(HOST, dB, uSER, PASS, PORT)
+        if (!connected) {
+            plugin.logger.info("Unable to establish a MySQL connection.")
         }
     }
 
-    public MySQLAPI(String conName,String host,String user,String pass,String port,String db){
-        this.conName = conName;
-        this.connected = false;
-        HOST = host;
-        USER = user;
-        PASS = pass;
-        PORT = port;
-        DB = db;
-        this.connected = Connect(host,db,user,pass,port);
-
-        if (!this.connected) {
-            Bukkit.getLogger().info("Unable to establish a MySQL connection.");
+    constructor(conName: String, host: String?, user: String?, pass: String?, port: String?, db: String?) {
+        this.conName = conName
+        connected = false
+        HOST = host
+        uSER = user
+        PASS = pass
+        PORT = port
+        dB = db
+        connected = Connect(host, db, user, pass, port)
+        if (!connected) {
+            Bukkit.getLogger().info("Unable to establish a MySQL connection.")
         }
     }
 
     /////////////////////////////////
     //       設定ファイル読み込み
     /////////////////////////////////
-    public void loadConfig() {
-        plugin.getLogger().info("MYSQL Config loading");
-        plugin.reloadConfig();
-        HOST = plugin.getConfig().getString("mysql.host");
-        USER = plugin.getConfig().getString("mysql.user");
-        PASS = plugin.getConfig().getString("mysql.pass");
-        PORT = plugin.getConfig().getString("mysql.port");
-        DB = plugin.getConfig().getString("mysql.db");
-        plugin.getLogger().info("Config loaded");
+    fun loadConfig() {
+        plugin!!.logger.info("MYSQL Config loading")
+        plugin!!.reloadConfig()
+        HOST = plugin!!.config.getString("mysql.host")
+        uSER = plugin!!.config.getString("mysql.user")
+        PASS = plugin!!.config.getString("mysql.pass")
+        PORT = plugin!!.config.getString("mysql.port")
+        dB = plugin!!.config.getString("mysql.db")
+        plugin!!.logger.info("Config loaded")
     }
 
-    public boolean connectable(){
-        this.connected = false;
-        this.connected = Connect(HOST, DB, USER, PASS, PORT);
-        if(!this.connected){
-            return false;
+    fun connectable(): Boolean {
+        connected = false
+        connected = Connect(HOST, dB, uSER, PASS, PORT)
+        if (!connected) {
+            return false
         }
-        this.connected = true;
-        return true;
+        connected = true
+        return true
     }
 
     ////////////////////////////////
     //       接続
     ////////////////////////////////
-    public Boolean Connect(String host, String db, String user, String pass,String port) {
-        this.HOST = host;
-        this.DB = db;
-        this.USER = user;
-        this.PASS = pass;
-        this.MySQL = new MySQLFunc(host, db, user, pass,port);
-        this.con = this.MySQL.open();
-        if(this.con == null){
-            Bukkit.getLogger().info("failed to open MYSQL");
-            return false;
+    fun Connect(host: String?, db: String?, user: String?, pass: String?, port: String?): Boolean {
+        HOST = host
+        dB = db
+        uSER = user
+        PASS = pass
+        MySQL = MySQLFunc(host, db, user, pass, port)
+        con = MySQL!!.open()
+        if (con == null) {
+            Bukkit.getLogger().info("failed to open MYSQL")
+            return false
         }
         try {
-            this.st = this.con.createStatement();
-            this.connected = true;
-            Bukkit.getLogger().info("[" + this.conName + "] Connected to the database.");
-        } catch (SQLException var6) {
-            this.connected = false;
-            Bukkit.getLogger().info("[" + this.conName + "] Could not connect to the database.");
+            st = con!!.createStatement()
+            connected = true
+            Bukkit.getLogger().info("[" + conName + "] Connected to the database.")
+        } catch (var6: SQLException) {
+            connected = false
+            Bukkit.getLogger().info("[" + conName + "] Could not connect to the database.")
         }
         //this.MySQL.close(this.con);
         try {
-            this.con.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+            con!!.close()
+        } catch (e: SQLException) {
+            e.printStackTrace()
         }
-        return Boolean.valueOf(this.connected);
+        return java.lang.Boolean.valueOf(connected)
     }
 
-    ////////////////////////////////
-    //     行数を数える
-    ////////////////////////////////
-    public String getDB(){
-        return DB;
-    }
-    public String getUSER(){
-        return USER;
-    }
-    public int countRows(String table) {
-        int count = 0;
-        ResultSet set = this.query(String.format("SELECT * FROM %s", new Object[]{table}));
-
+    fun countRows(table: String): Int {
+        var count = 0
+        val set = query(String.format("SELECT * FROM %s", *arrayOf<Any>(table)))
         try {
-            while (set.next()) {
-                ++count;
+            while (set!!.next()) {
+                ++count
             }
-        } catch (SQLException var5) {
-            Bukkit.getLogger().log(Level.SEVERE, "Could not select all rows from table: " + table + ", error: " + var5.getErrorCode());
+        } catch (var5: SQLException) {
+            Bukkit.getLogger().log(Level.SEVERE, "Could not select all rows from table: " + table + ", error: " + var5.errorCode)
         }
-
-        return count;
+        return count
     }
 
     ////////////////////////////////
     //     レコード数
     ////////////////////////////////
-    public int count(String table) {
-        int count = 0;
-        ResultSet set = this.query(String.format("SELECT count(*) from %s", table));
-
-        try {
-            count = set.getInt("count(*)");
-
-        } catch (SQLException var5) {
-            Bukkit.getLogger().log(Level.SEVERE, "Could not select all rows from table: " + table + ", error: " + var5.getErrorCode());
-            return -1;
+    fun count(table: String): Int {
+        var count = 0
+        val set = query(String.format("SELECT count(*) from %s", table))
+        count = try {
+            set!!.getInt("count(*)")
+        } catch (var5: SQLException) {
+            Bukkit.getLogger().log(Level.SEVERE, "Could not select all rows from table: " + table + ", error: " + var5.errorCode)
+            return -1
         }
-
-        return count;
+        return count
     }
+
     ////////////////////////////////
     //      実行
     ////////////////////////////////
-
-    public int executeGetId(String query){
-        int key = -1;
+    fun executeGetId(query: String?): Int {
+        var key = -1
         try {
-            MySQL = new MySQLFunc(HOST, DB, USER, PASS,PORT);
-            con = MySQL.open();
+            MySQL = MySQLFunc(HOST, dB, uSER, PASS, PORT)
+            con = MySQL!!.open()
             //open();
-            PreparedStatement pstmt = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
-            pstmt.executeUpdate();
-            pstmt.setQueryTimeout(10);
-            ResultSet keys = pstmt.getGeneratedKeys();
-            keys.next();
-            key = keys.getInt(1);
-            keys.close();
-            pstmt.close();
+            val pstmt = con!!.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            pstmt.executeUpdate()
+            pstmt.queryTimeout = 10
+            val keys = pstmt.generatedKeys
+            keys.next()
+            key = keys.getInt(1)
+            keys.close()
+            pstmt.close()
             //close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (e: SQLException) {
+            e.printStackTrace()
         }
-        return key;
+        return key
     }
 
-    public boolean execute(String query) {
-        boolean result = true;
-        MySQL = new MySQLFunc(HOST, DB, USER, PASS,PORT);
-        con = MySQL.open();
+    fun execute(query: String): Boolean {
+        var result = true
+        MySQL = MySQLFunc(HOST, dB, uSER, PASS, PORT)
+        con = MySQL!!.open()
         if (con == null) {
-            Bukkit.getLogger().info("failed to open MYSQL");
-            return false;
+            Bukkit.getLogger().info("failed to open MYSQL")
+            return false
         }
         if (debugMode) {
-            plugin.getLogger().info("query:" + query);
+            plugin!!.logger.info("query:$query")
         }
         try {
-            st = con.createStatement();
-            st.execute(query);
-        } catch (SQLException var3) {
-            plugin.getLogger().info("[" + conName + "] Error executing statement: " + var3.getErrorCode() + ":" + var3.getLocalizedMessage());
-            plugin.getLogger().info(query);
-            result = false;
+            st = con!!.createStatement()
+            st.execute(query)
+        } catch (var3: SQLException) {
+            plugin!!.logger.info("[" + conName + "] Error executing statement: " + var3.errorCode + ":" + var3.localizedMessage)
+            plugin!!.logger.info(query)
+            result = false
         }
-        this.MySQL.close(this.con);
-        close();
-        return result;
+        MySQL!!.close(con)
+        close()
+        return result
     }
 
     ////////////////////////////////
     //      クエリ
     //////////////////////////////
     //
-
-    public ResultSet query(String query) {
-        ResultSet rs = null;
-        MySQL = new MySQLFunc(HOST, DB, USER, PASS, PORT);
-        con = MySQL.open();
+    fun query(query: String): ResultSet? {
+        var rs: ResultSet? = null
+        MySQL = MySQLFunc(HOST, dB, uSER, PASS, PORT)
+        con = MySQL!!.open()
         if (debugMode) {
-            Bukkit.getLogger().info("query:" + query);
+            Bukkit.getLogger().info("query:$query")
         }
         try {
-            st = con.createStatement();
-            st.setQueryTimeout(10);
-            rs = st.executeQuery(query);
-        } catch (SQLException var4) {
-            Bukkit.getLogger().info("[" + conName + "] Error executing query: " + var4.getErrorCode());
-            plugin.getLogger().info(query);
+            st = con!!.createStatement()
+            st.setQueryTimeout(10)
+            rs = st.executeQuery(query)
+        } catch (var4: SQLException) {
+            Bukkit.getLogger().info("[" + conName + "] Error executing query: " + var4.errorCode)
+            plugin!!.logger.info(query)
         }
-        return rs;
+        return rs
     }
 
-    public void close() {
-        this.MySQL.close(this.con);
+    fun close() {
+        MySQL!!.close(con)
         try {
-            if(!st.isClosed()){
-                st.close();
-                st = null;
+            if (!st!!.isClosed) {
+                st!!.close()
+                st = null
             }
-            if(!con.isClosed()){
-                con.close();
-                con = null;
+            if (!con!!.isClosed) {
+                con!!.close()
+                con = null
             }
-        } catch (SQLException e) {
-        } catch (Exception e){
-        }finally {
+        } catch (e: SQLException) {
+        } catch (e: Exception) {
+        } finally {
         }
     }
 
-
-    public String currentTimeNoBracket(){
-        java.util.Date date = new java.util.Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy'-'MM'-'dd' 'HH':'mm':'ss");
-        return sdf.format(date);
+    fun currentTimeNoBracket(): String {
+        val date = Date()
+        val sdf = SimpleDateFormat("yyyy'-'MM'-'dd' 'HH':'mm':'ss")
+        return sdf.format(date)
     }
 
-    public int convertBooleanToMysql(Boolean b){
-        if(b){
-            return 1;
-        }
-        return 0;
+    fun convertBooleanToMysql(b: Boolean): Int {
+        return if (b) {
+            1
+        } else 0
     }
 
-    public boolean convertMysqlToBoolean(int i){
-        if(i == 1){
-            return true;
-        }
-        return false;
+    fun convertMysqlToBoolean(i: Int): Boolean {
+        return if (i == 1) {
+            true
+        } else false
     }
 }

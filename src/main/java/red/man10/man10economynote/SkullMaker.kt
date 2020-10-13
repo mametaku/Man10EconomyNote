@@ -1,166 +1,157 @@
-package red.man10.man10economynote;
+package red.man10.man10economynote
 
-import com.google.common.collect.ForwardingMultimap;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
+import com.google.common.collect.ForwardingMultimap
+import org.bukkit.Material
+import org.bukkit.inventory.ItemStack
+import org.bukkit.inventory.meta.ItemMeta
+import org.bukkit.inventory.meta.SkullMeta
+import java.lang.reflect.Constructor
+import java.lang.reflect.Field
+import java.lang.reflect.InvocationTargetException
+import java.lang.reflect.Method
+import java.util.*
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-
-public class SkullMaker {
-
-    private String owner;
-    private String url;
-
-    private int amount = 1;
-    private String name;
-    private List<String> lore = new ArrayList<>();
-
-    public SkullMaker withAmount(int amount) {
-        this.amount = amount;
-        return this;
+class SkullMaker {
+    private var owner: String? = null
+    private var url: String? = null
+    private var amount = 1
+    private var name: String? = null
+    private val lore: MutableList<String> = ArrayList()
+    fun withAmount(amount: Int): SkullMaker {
+        this.amount = amount
+        return this
     }
 
-    public SkullMaker withName(String name) {
-        this.name = name;
-        return this;
+    fun withName(name: String?): SkullMaker {
+        this.name = name
+        return this
     }
 
-    public SkullMaker withLore(String line) {
-        lore.add(line);
-        return this;
+    fun withLore(line: String): SkullMaker {
+        lore.add(line)
+        return this
     }
 
-    public SkullMaker withLore(String... lines) {
-        lore.addAll(Arrays.asList(lines));
-        return this;
+    fun withLore(vararg lines: String?): SkullMaker {
+        lore.addAll(Arrays.asList<String>(*lines))
+        return this
     }
 
-    public SkullMaker withLore(List<String> lines) {
-        lore.addAll(lines);
-        return this;
+    fun withLore(lines: List<String?>?): SkullMaker {
+        lore.addAll(lines)
+        return this
     }
 
-    public SkullMaker withOwner(String ownerName) {
-        this.owner = ownerName;
-        return this;
+    fun withOwner(ownerName: String?): SkullMaker {
+        owner = ownerName
+        return this
     }
 
-    public SkullMaker withSkinUrl(String url) {
-        this.url = url;
-        return this;
+    fun withSkinUrl(url: String?): SkullMaker {
+        this.url = url
+        return this
     }
 
-    public ItemStack build() {
-        ItemStack item = new ItemStack(Material.PLAYER_HEAD, amount);
-        SkullMeta meta = (SkullMeta) item.getItemMeta();
+    fun build(): ItemStack {
+        val item = ItemStack(Material.PLAYER_HEAD, amount)
+        val meta = item.itemMeta as SkullMeta
         if (owner != null) {
-            meta.setOwner(owner);
+            meta.owner = owner
         } else if (url != null) {
-            loadProfile(meta, url);
+            loadProfile(meta, url!!)
         }
         if (name != null) {
-            meta.setDisplayName(name);
+            meta.setDisplayName(name)
         }
         if (!lore.isEmpty()) {
-            meta.setLore(lore);
+            meta.lore = lore
         }
-        item.setItemMeta(meta);
-        return item;
+        item.itemMeta = meta
+        return item
     }
 
-    private void loadProfile(ItemMeta meta, String url) {
-
-        Class<?> profileClass = Reflection.getClass("com.mojang.authlib.GameProfile");
-
-        Constructor<?> profileConstructor = Reflection.getDeclaredConstructor(profileClass, UUID.class, String.class);
-
-        Object profile = Reflection.newInstance(profileConstructor, UUID.randomUUID(), null);
-
-        byte[] encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).getBytes());
-
-        Method getPropertiesMethod = Reflection.getDeclaredMethod(profileClass, "getProperties");
-
-        Object propertyMap = Reflection.invoke(getPropertiesMethod, profile);
-
-        Class<?> propertyClass = Reflection.getClass("com.mojang.authlib.properties.Property");
-
+    private fun loadProfile(meta: ItemMeta, url: String) {
+        val profileClass = Reflection.getClass("com.mojang.authlib.GameProfile")
+        val profileConstructor = Reflection.getDeclaredConstructor(profileClass, UUID::class.java, String::class.java)
+        val profile = Reflection.newInstance(profileConstructor, UUID.randomUUID(), null)!!
+        val encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).toByteArray())
+        val getPropertiesMethod = Reflection.getDeclaredMethod(profileClass, "getProperties")
+        val propertyMap = Reflection.invoke(getPropertiesMethod, profile)
+        val propertyClass = Reflection.getClass("com.mojang.authlib.properties.Property")
         Reflection.invoke(
                 Reflection.getDeclaredMethod(
-                        ForwardingMultimap.class, "put", Object.class, Object.class
+                        ForwardingMultimap::class.java, "put", Any::class.java, Any::class.java
                 ),
                 propertyMap,
                 "textures",
-                Reflection.newInstance(Reflection.getDeclaredConstructor(propertyClass, String.class, String.class), "textures", new String(encodedData))
-        );
-
-        Reflection.setField("profile", meta, profile);
+                Reflection.newInstance(Reflection.getDeclaredConstructor(propertyClass, String::class.java, String::class.java), "textures", String(encodedData))
+        )
+        Reflection.setField("profile", meta, profile)
     }
 
-    private static final class Reflection {
-
-        private static Class<?> getClass(String forName) {
-            try {
-                return Class.forName(forName);
-            } catch (ClassNotFoundException e) {
-                return null;
+    private object Reflection {
+        fun getClass(forName: String): Class<*>? {
+            return try {
+                Class.forName(forName)
+            } catch (e: ClassNotFoundException) {
+                null
             }
         }
 
-        private static <T> Constructor<T> getDeclaredConstructor(Class<T> clazz, Class<?>... params) {
-            try {
-                return clazz.getDeclaredConstructor(params);
-            } catch (NoSuchMethodException e) {
-                return null;
+        fun <T> getDeclaredConstructor(clazz: Class<T>?, vararg params: Class<*>): Constructor<T>? {
+            return try {
+                clazz!!.getDeclaredConstructor(*params)
+            } catch (e: NoSuchMethodException) {
+                null
             }
         }
 
-        private static <T> T newInstance(Constructor<T> constructor, Object... params) {
-            try {
-                return constructor.newInstance(params);
-            } catch (IllegalAccessException | InstantiationException | InvocationTargetException e) {
-                return null;
+        fun <T> newInstance(constructor: Constructor<T>?, vararg params: Any): T? {
+            return try {
+                constructor!!.newInstance(*params)
+            } catch (e: IllegalAccessException) {
+                null
+            } catch (e: InstantiationException) {
+                null
+            } catch (e: InvocationTargetException) {
+                null
             }
         }
 
-        private static Method getDeclaredMethod(Class<?> clazz, String name, Class<?>... params) {
-            try {
-                return clazz.getDeclaredMethod(name, params);
-            } catch (NoSuchMethodException e) {
-                return null;
+        fun getDeclaredMethod(clazz: Class<*>?, name: String, vararg params: Class<*>): Method? {
+            return try {
+                clazz!!.getDeclaredMethod(name, *params)
+            } catch (e: NoSuchMethodException) {
+                null
             }
         }
 
-        private static Object invoke(Method method, Object object, Object... params) {
-            method.setAccessible(true);
-            try {
-                return method.invoke(object, params);
-            } catch (InvocationTargetException | IllegalAccessException e) {
-                return null;
+        operator fun invoke(method: Method?, `object`: Any?, vararg params: Any): Any? {
+            method!!.isAccessible = true
+            return try {
+                method.invoke(`object`, *params)
+            } catch (e: InvocationTargetException) {
+                null
+            } catch (e: IllegalAccessException) {
+                null
             }
         }
 
-        private static void setField(String name, Object instance, Object value) {
-            Field field = getDeclaredField(instance.getClass(), name);
-            field.setAccessible(true);
+        fun setField(name: String, instance: Any, value: Any) {
+            val field = getDeclaredField(instance.javaClass, name)
+            field!!.isAccessible = true
             try {
-                field.set(instance, value);
-            } catch (IllegalAccessException ignored) {}
-        }
-
-        private static Field getDeclaredField(Class<?> clazz, String name) {
-            try {
-                return clazz.getDeclaredField(name);
-            } catch (NoSuchFieldException e) {
-                return null;
+                field[instance] = value
+            } catch (ignored: IllegalAccessException) {
             }
         }
 
+        private fun getDeclaredField(clazz: Class<*>, name: String): Field? {
+            return try {
+                clazz.getDeclaredField(name)
+            } catch (e: NoSuchFieldException) {
+                null
+            }
+        }
     }
-
 }

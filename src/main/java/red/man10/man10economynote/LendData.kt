@@ -1,43 +1,18 @@
-package red.man10.man10economynote;
+package red.man10.man10economynote
 
-import java.util.UUID;
+import java.util.*
 
 /**
  * Created by sho on 2017/12/17.
  */
-public class LendData {
-    String name;
-    UUID uuid;
-    long baseValue;
-    long finalValue;
-    int usableDays;
-    long finalValueLender;
-    double interest;
-    long valueLeft;
-    int id;
-    long creationTime;
-
-    public LendData(String name,UUID uuid,long baseValue,long finalValue,int usableDays,long finalValueLender,double interest,long valueLeft, int id,long creationTime){
-        this.name = name;
-        this.creationTime = creationTime;
-        this.interest = interest;
-        this.id = id;
-        this.valueLeft = valueLeft;
-        this.uuid = uuid;
-        this.finalValueLender = finalValueLender;
-        this.baseValue = baseValue;
-        this.finalValue = finalValue;
-        this.usableDays = usableDays;
-    }
-
-    public boolean hasNull(){
-        try{
-            if(name == null || uuid == null){
-                return true;
-            }
-            return false;
-        }catch (NullPointerException e){
-            return true;
+class LendData(var name: String?, var uuid: UUID?, var baseValue: Long, var finalValue: Long, var usableDays: Int, var finalValueLender: Long, var interest: Double, var valueLeft: Long, var id: Int, var creationTime: Long) {
+    fun hasNull(): Boolean {
+        return try {
+            if (name == null || uuid == null) {
+                true
+            } else false
+        } catch (e: NullPointerException) {
+            true
         }
     }
 }
