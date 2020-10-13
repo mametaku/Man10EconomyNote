@@ -36,7 +36,7 @@ public class EconomyNoteEvent implements Listener {
     @EventHandler
     public void onInteract(PlayerInteractEvent e){
         if(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR){
-            if(e.getPlayer().getInventory().getItemInMainHand().getType() == Material.BLUE_DYE && e.getPlayer().getInventory().getItemInMainHand().getDurability() == 9 && e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).contains("§6====[Man10Bank]====" )){
+            if(e.getPlayer().getInventory().getItemInMainHand().getType() == Material.PINK_DYE && e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).contains("§6====[Man10Bank]====" )){
                 plugin.slotData.put(e.getPlayer().getUniqueId(), e.getPlayer().getInventory().getHeldItemSlot());
                 String id = e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).replace("§6====[Man10Bank]====", "").replace("§", "");
                 LendData ld = plugin.getLendData(Integer.parseInt(id));
@@ -63,7 +63,7 @@ public class EconomyNoteEvent implements Listener {
                 plugin.inventoryMap.put(e.getPlayer().getUniqueId(), "withdrawMenu");
                 plugin.lendDataMap.put(e.getPlayer().getUniqueId(), ld);
             }
-            if(e.getPlayer().getInventory().getItemInMainHand().getType() == Material.BLUE_DYE && e.getPlayer().getInventory().getItemInMainHand().getDurability() == 12 && e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).contains("§e====[Man10Bank]====" )){
+            if(e.getPlayer().getInventory().getItemInMainHand().getType() == Material.LIGHT_BLUE_DYE &&e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).contains("§e====[Man10Bank]====" )){
                 plugin.slotData.put(e.getPlayer().getUniqueId(), e.getPlayer().getInventory().getHeldItemSlot());
                 String id = e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).replace("§e====[Man10Bank]====", "").replace("§", "");
                 Man10EconomyNote.NoteData nd = plugin.getNoteData(Integer.parseInt(id));
@@ -238,7 +238,7 @@ public class EconomyNoteEvent implements Listener {
                                 java.util.Date dateExpire = new java.util.Date((usableTimeStamp + 31536000) * 1000);
                                 int id = plugin.mysql.executeGetId("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`final_value`,`value_left`,`monthly_interest`,`usable_after_days`,`memo`,`expired`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expire_date_time`,`expire_time`) " +
                                         "VALUES ('0','" + "PromissoryNote','" + ld.name + "','" + ld.uuid + "','" + ld.baseValue + "','" + ld.finalValue + "','" + ld.finalValue + "','" + ld.interest + "','" + ld.usableDays + "','','0','" + plugin.mysql.currentTimeNoBracket() + "','" + System.currentTimeMillis()/1000 + "','" + sdf.format(date) + "','" + usableTimeStamp + "','" + sdf.format(dateExpire) + "','" + (usableTimeStamp + 631536000) + "');");
-                                ItemStack ink = new ItemStack(Material.INK_SAC, 1, (short) 9);
+                                ItemStack ink = new ItemStack(Material.PINK_DYE, 1);
                                 ItemMeta inkMeta = ink.getItemMeta();
                                 inkMeta.setDisplayName("§c§l約束手形§7§l(Promissory Note)");
                                 inkMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);

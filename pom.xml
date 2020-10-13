@@ -75,7 +75,7 @@
             <artifactId>Man10VaultAPIPlus</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>C:/Users/mametaku/Downloads/man10VaultAPIPlus-1.0-SNAPSHOT.jar</systemPath>
+            <systemPath>${basedir}/libs/man10VaultAPIPlus-1.0-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

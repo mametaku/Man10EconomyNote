@@ -103,7 +103,7 @@ public final class Man10EconomyNote extends JavaPlugin {
     }
 
     String mainDBQuery = "" +
-            "CREATE TABLE `man10_economy_note` (\n" +
+            "CREATE TABLE if not exists `man10_economy_note` (\n" +
             "\t`id` INT(11) NOT NULL AUTO_INCREMENT,\n" +
             "\t`type` VARCHAR(50) NULL DEFAULT NULL,\n" +
             "\t`wired_to_name` VARCHAR(50) NULL DEFAULT NULL,\n" +
@@ -127,7 +127,7 @@ public final class Man10EconomyNote extends JavaPlugin {
             "ENGINE=InnoDB\n" +
             ";\n";
 
-    String logDbQuery = "CREATE TABLE `man10_economy_note_log` (\n" +
+    String logDbQuery = "CREATE TABLE if not exists `man10_economy_note_log` (\n" +
             "\t`id` INT(11) NOT NULL AUTO_INCREMENT,\n" +
             "\t`ticket_id` INT(11) NOT NULL DEFAULT '0',\n" +
             "\t`name` VARCHAR(50) NULL DEFAULT NULL,\n" +

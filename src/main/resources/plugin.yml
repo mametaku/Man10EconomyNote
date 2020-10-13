@@ -2,6 +2,7 @@ name: Man10EconomyNote
 version: ${project.version}
 main: red.man10.man10economynote.Man10EconomyNote
 authors: [Sho0]
+api-version: 1.13
 commands:
  mlend:
  mcheque:
