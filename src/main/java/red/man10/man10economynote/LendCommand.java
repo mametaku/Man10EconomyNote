@@ -126,7 +126,7 @@ public class LendCommand implements CommandExecutor {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy'年'MM'月'dd'日'E'曜日'k'時'mm'分'ss'秒'");
         Inventory inv = Bukkit.createInventory(null, 27, "§4§lこの条件を受け入れますか？");
 
-        ItemStack ink = new ItemStack(Material.INK_SAC, 1, (short) 9);
+        ItemStack ink = new ItemStack(Material.INK_SAC, 1);
         ItemMeta inkMeta = ink.getItemMeta();
         inkMeta.setDisplayName("§c§l約束手形§7§l(Promissory Note)");
         inkMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
@@ -163,7 +163,7 @@ public class LendCommand implements CommandExecutor {
 
         inv.setItem(22, paper);
 
-        ItemStack green = new ItemStack(Material.GREEN_STAINED_GLASS_PANE, 1, (short) 5);
+        ItemStack green = new ItemStack(Material.GREEN_STAINED_GLASS_PANE, 1);
         ItemMeta itemMeta = green.getItemMeta();
         itemMeta.setDisplayName("§a§l承諾する");
         green.setItemMeta(itemMeta);
@@ -172,7 +172,7 @@ public class LendCommand implements CommandExecutor {
             inv.setItem(greens[i], green);
         }
 
-        ItemStack red = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1, (short) 14);
+        ItemStack red = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
         ItemMeta itemMetaRed = red.getItemMeta();
         itemMetaRed.setDisplayName("§c§l提示を拒否する");
         red.setItemMeta(itemMetaRed);
@@ -210,7 +210,7 @@ public class LendCommand implements CommandExecutor {
 
         inv.setItem(13, ink);
 
-        ItemStack green = new ItemStack(Material.GREEN_STAINED_GLASS_PANE, 1, (short) 5);
+        ItemStack green = new ItemStack(Material.GREEN_STAINED_GLASS_PANE, 1);
         ItemMeta itemMeta = green.getItemMeta();
         itemMeta.setDisplayName("§a§l提示する");
         green.setItemMeta(itemMeta);
@@ -219,7 +219,7 @@ public class LendCommand implements CommandExecutor {
             inv.setItem(greens[i], green);
         }
 
-        ItemStack red = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1, (short) 14);
+        ItemStack red = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
         ItemMeta itemMetaRed = red.getItemMeta();
         itemMetaRed.setDisplayName("§c§lキャンセル");
         red.setItemMeta(itemMetaRed);

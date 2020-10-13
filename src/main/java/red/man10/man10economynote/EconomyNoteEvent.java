@@ -307,7 +307,7 @@ public class EconomyNoteEvent implements Listener {
 
     Inventory createChequeInventory(Player p, long value){
         Inventory inv = Bukkit.createInventory(null, 27,"§4§l" + new JPYBalanceFormat(value).getString() + "円と換金しますか？");
-        ItemStack green = new ItemStack(Material.GREEN_STAINED_GLASS_PANE,1,(short) 5);
+        ItemStack green = new ItemStack(Material.GREEN_STAINED_GLASS_PANE,1);
         ItemMeta itemMeta = green.getItemMeta();
         itemMeta.setDisplayName("§a§l" + value + "円と換金する");
         List<String> lore = new ArrayList<>();
@@ -319,7 +319,7 @@ public class EconomyNoteEvent implements Listener {
             inv.setItem(greens[i], green);
         }
 
-        ItemStack red = new ItemStack(Material.RED_STAINED_GLASS_PANE,1,(short) 14);
+        ItemStack red = new ItemStack(Material.RED_STAINED_GLASS_PANE,1);
         ItemMeta itemMetaRed = red.getItemMeta();
         itemMetaRed.setDisplayName("§c§lキャンセル");
         red.setItemMeta(itemMetaRed);

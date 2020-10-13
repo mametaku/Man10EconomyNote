@@ -62,7 +62,7 @@ public class ChequeCommand implements CommandExecutor {
                 plugin.vault.takePlayerMoney(p.getUniqueId(),(double) i, TransactionType.SEND_CHEQUE, "Created Cheque user:" + p.getName() + " price:" + i, TransactionLogType.RAW );
                 ChequeResult res = createChequeData(p.getName(), p.getUniqueId(), i, null);
 
-                ItemStack blueDye = new ItemStack(Material.BLUE_DYE, 1, (short) 12);
+                ItemStack blueDye = new ItemStack(Material.BLUE_DYE, 1);
                 ItemMeta itemMeta = blueDye.getItemMeta();
                 itemMeta.setDisplayName("§b§l小切手§7§l(Cheque)");
                 List<String> lore = new ArrayList<>();
@@ -104,7 +104,7 @@ public class ChequeCommand implements CommandExecutor {
                 plugin.vault.takePlayerMoney(p.getUniqueId(),(double) i, TransactionType.SEND_CHEQUE, "Created Cheque user:" + p.getName() + " price:" + i, TransactionLogType.RAW );
                 ChequeResult res = createChequeData(p.getName(), p.getUniqueId(), i, args[1].replace("'","\\'"));
 
-                ItemStack blueDye = new ItemStack(Material.BLUE_DYE, 1, (short) 12);
+                ItemStack blueDye = new ItemStack(Material.BLUE_DYE, 1);
                 ItemMeta itemMeta = blueDye.getItemMeta();
                 itemMeta.setDisplayName("§b§l小切手§7§l(Cheque)");
                 List<String> lore = new ArrayList<>();
