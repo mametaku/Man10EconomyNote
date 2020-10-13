@@ -2,12 +2,14 @@ package red.man10.man10economynote
 
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
-
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
 import java.sql.Statement
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.logging.Level
+
 
 /**
  * Created by takatronix on 2017/03/05.
@@ -195,5 +197,11 @@ class MySQLManager(private val plugin: JavaPlugin, private val conName: String) 
         } catch (var4: SQLException) {
         }
 
+    }
+
+    fun currentTimeNoBracket(): String? {
+        val date = Date()
+        val sdf = SimpleDateFormat("yyyy'-'MM'-'dd' 'HH':'mm':'ss")
+        return sdf.format(date)
     }
 }

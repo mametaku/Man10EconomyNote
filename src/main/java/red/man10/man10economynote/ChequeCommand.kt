@@ -9,7 +9,7 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import red.man10.man10economynote.vault.JPYBalanceFormat
+import red.man10.man10vaultapiplus.JPYBalanceFormat
 import java.util.*
 
 /**
@@ -138,10 +138,10 @@ class ChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
 
     private fun createChequeData(name: String, uuid: UUID, value: Long, memo: String?): ChequeResult {
         if (memo == null || memo.equals("", ignoreCase = true)) {
-            val id = plugin!!.mysql!!.executeGetId("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`memo`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expired`,`final_value`) VALUES ('0','Cheque','" + name + "','" + uuid + "','" + value + "','" + memo + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','0','" + value + "');")
+            val id = plugin!!.mysql!!.execute("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`memo`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expired`,`final_value`) VALUES ('0','Cheque','" + name + "','" + uuid + "','" + value + "','" + memo + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','0','" + value + "');")
             return ChequeResult(id, false)
         }
-        val id = plugin!!.mysql!!.executeGetId("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`memo`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expired`,`final_value`) VALUES ('0','Cheque','" + name + "','" + uuid + "','" + value + "','" + memo + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','0','" + value + "');")
+        val id = plugin!!.mysql!!.execute("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`memo`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expired`,`final_value`) VALUES ('0','Cheque','" + name + "','" + uuid + "','" + value + "','" + memo + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','0','" + value + "');")
         return ChequeResult(id, true)
     }
 

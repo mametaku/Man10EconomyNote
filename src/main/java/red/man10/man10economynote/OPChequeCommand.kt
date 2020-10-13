@@ -9,8 +9,9 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
-import red.man10.man10economynote.vault.JPYBalanceFormat
+import red.man10.man10vaultapiplus.JPYBalanceFormat
 import java.util.*
+
 
 /**
  * Created by sho on 2017/12/15.
@@ -43,7 +44,7 @@ class OPChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
                 val itemMeta = blueDye.itemMeta
                 itemMeta.setDisplayName("§b§l小切手§7§l(Cheque)")
                 val lore: MutableList<String> = ArrayList()
-                lore.add("§e====[Man10Bank]====" + format(res.id.toString()))
+                lore.add("§e====[Man10Bank]====" + format(res?.id.toString()))
                 lore.add("")
                 lore.add("§a§l発行者:" + p.name)
                 lore.add("§a§l金額:" + JPYBalanceFormat(i).getString().toString() + "円")
@@ -53,7 +54,7 @@ class OPChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS)
                 itemMeta.lore = lore
                 blueDye.setItemMeta(itemMeta)
-                plugin!!.createLog(res.id, p.name, p.uniqueId, "OPCreateCheque", i.toDouble())
+                plugin!!.createLog(res?.id, p.name, p.uniqueId, "OPCreateCheque", i.toDouble())
                 p.inventory.addItem(blueDye)
             } catch (e: NumberFormatException) {
                 p.sendMessage("§e[§dMan10EconNote§e]§b金額は数字でなくてはなりません")
@@ -75,7 +76,7 @@ class OPChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
                 val itemMeta = blueDye.itemMeta
                 itemMeta.setDisplayName("§b§l小切手§7§l(Cheque)")
                 val lore: MutableList<String> = ArrayList()
-                lore.add("§e====[Man10Bank]====" + format(res.id.toString()))
+                lore.add("§e====[Man10Bank]====" + format(res?.id.toString()))
                 lore.add("")
                 lore.add("§a§l発行者:" + p.name)
                 lore.add("§a§l金額:" + JPYBalanceFormat(i).getString().toString() + "円")
@@ -88,7 +89,7 @@ class OPChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS)
                 itemMeta.lore = lore
                 blueDye.setItemMeta(itemMeta)
-                plugin!!.createLog(res.id, p.name, p.uniqueId, "OPCreateCheque", i.toDouble())
+                plugin!!.createLog(res?.id, p.name, p.uniqueId, "OPCreateCheque", i.toDouble())
                 p.inventory.addItem(blueDye)
             } catch (e: NumberFormatException) {
                 p.sendMessage("§e[§dMan10EconNote§e]§b金額は数字でなくてはなりません")
@@ -110,7 +111,7 @@ class OPChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
         p.sendMessage("§6§lCreated By Sho0")
     }
 
-    internal inner class ChequeResult(id: Int, memo: Boolean) {
+    internal class ChequeResult(id: Int, memo: Boolean) {
         var memo = false
         var id = -1
 
@@ -119,13 +120,12 @@ class OPChequeCommand(plugin: Man10EconomyNote?) : CommandExecutor {
             this.id = id
         }
     }
-
-    private fun createChequeData(name: String, uuid: UUID, value: Long, memo: String?): ChequeResult {
+    private fun createChequeData(name: String, uuid: UUID, value: Long, memo: String?): ChequeResult? {
         if (memo == null || memo.equals("", ignoreCase = true)) {
-            val id = plugin!!.mysql!!.executeGetId("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`memo`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expired`,`final_value`) VALUES ('0','Cheque','" + name + "','" + uuid + "','" + value + "','" + memo + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','0','" + value + "');")
+            val id = plugin!!.mysql!!.execute("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`memo`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expired`,`final_value`) VALUES ('0','Cheque','" + name + "','" + uuid + "','" + value + "','" + memo + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','0','" + value + "');")
             return ChequeResult(id, false)
         }
-        val id = plugin!!.mysql!!.executeGetId("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`memo`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expired`,`final_value`) VALUES ('0','Cheque','" + name + "','" + uuid + "','" + value + "','" + memo + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','0','" + value + "');")
+        val id = plugin!!.mysql!!.execute("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`memo`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expired`,`final_value`) VALUES ('0','Cheque','" + name + "','" + uuid + "','" + value + "','" + memo + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','0','" + value + "');")
         return ChequeResult(id, true)
     }
 

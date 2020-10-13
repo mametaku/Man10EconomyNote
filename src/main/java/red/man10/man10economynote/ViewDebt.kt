@@ -5,7 +5,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import red.man10.man10economynote.vault.JPYBalanceFormat
+import red.man10.man10vaultapiplus.JPYBalanceFormat
 import java.sql.SQLException
 import java.util.*
 

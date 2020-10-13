@@ -3,13 +3,13 @@ package red.man10.man10economynote
 import org.bukkit.Bukkit
 import org.bukkit.inventory.ItemStack
 import org.bukkit.plugin.java.JavaPlugin
-import red.man10.man10economynote.vault.VaultManager
+import red.man10.man10vaultapiplus.Man10VaultAPIPlus
 import java.sql.SQLException
 import java.util.*
 
 class Man10EconomyNote : JavaPlugin() {
     var mysql: MySQLManager? = null
-    var vault: VaultManager? = null
+    var vault: Man10VaultAPIPlus? = null
     var inventoryMap = HashMap<UUID?, String?>()
     var noteDataMap = HashMap<UUID?, NoteData?>()
     var slotData = HashMap<UUID?, Int?>()

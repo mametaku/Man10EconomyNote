@@ -10,6 +10,11 @@ import java.lang.reflect.Field
 import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 import java.util.*
+import java.util.UUID
+
+
+
+
 
 class SkullMaker {
     private var owner: String? = null
@@ -32,12 +37,12 @@ class SkullMaker {
         return this
     }
 
-    fun withLore(vararg lines: String?): SkullMaker {
+    fun withLore(vararg lines: String?): SkullMaker? {
         lore.addAll(Arrays.asList<String>(*lines))
         return this
     }
 
-    fun withLore(lines: List<String?>?): SkullMaker {
+    fun withLore(lines: List<String>): SkullMaker? {
         lore.addAll(lines)
         return this
     }
@@ -72,19 +77,19 @@ class SkullMaker {
 
     private fun loadProfile(meta: ItemMeta, url: String) {
         val profileClass = Reflection.getClass("com.mojang.authlib.GameProfile")
-        val profileConstructor = Reflection.getDeclaredConstructor(profileClass, UUID::class.java, String::class.java)
-        val profile = Reflection.newInstance(profileConstructor, UUID.randomUUID(), null)!!
+        val profileConstructor = Reflection.getDeclaredConstructor(profileClass!!, UUID::class.java, String::class.java)
+        val profile = Reflection.newInstance(profileConstructor!!, UUID.randomUUID(), null)
         val encodedData = Base64.getEncoder().encode(String.format("{textures:{SKIN:{url:\"%s\"}}}", url).toByteArray())
         val getPropertiesMethod = Reflection.getDeclaredMethod(profileClass, "getProperties")
-        val propertyMap = Reflection.invoke(getPropertiesMethod, profile)
+        val propertyMap = Reflection.invoke(getPropertiesMethod!!, profile!!)
         val propertyClass = Reflection.getClass("com.mojang.authlib.properties.Property")
         Reflection.invoke(
                 Reflection.getDeclaredMethod(
                         ForwardingMultimap::class.java, "put", Any::class.java, Any::class.java
-                ),
-                propertyMap,
+                )!!,
+                propertyMap!!,
                 "textures",
-                Reflection.newInstance(Reflection.getDeclaredConstructor(propertyClass, String::class.java, String::class.java), "textures", String(encodedData))!!
+                Reflection.newInstance(Reflection.getDeclaredConstructor(propertyClass!!, String::class.java, String::class.java)!!, "textures", String(encodedData))!!
         )
         Reflection.setField("profile", meta, profile)
     }
@@ -98,17 +103,17 @@ class SkullMaker {
             }
         }
 
-        fun <T> getDeclaredConstructor(clazz: Class<T>?, vararg params: Class<*>): Constructor<T>? {
+        fun <T> getDeclaredConstructor(clazz: Class<T>, vararg params: Class<*>): Constructor<T>? {
             return try {
-                clazz!!.getDeclaredConstructor(*params)
+                clazz.getDeclaredConstructor(*params)
             } catch (e: NoSuchMethodException) {
                 null
             }
         }
 
-        fun <T> newInstance(constructor: Constructor<T>?, vararg params: Any): T? {
+        fun <T> newInstance(constructor: Constructor<T>, vararg params: Any?): T? {
             return try {
-                constructor!!.newInstance(*params)
+                constructor.newInstance(*params)
             } catch (e: IllegalAccessException) {
                 null
             } catch (e: InstantiationException) {
@@ -118,16 +123,16 @@ class SkullMaker {
             }
         }
 
-        fun getDeclaredMethod(clazz: Class<*>?, name: String, vararg params: Class<*>): Method? {
+        fun getDeclaredMethod(clazz: Class<*>, name: String, vararg params: Class<*>): Method? {
             return try {
-                clazz!!.getDeclaredMethod(name, *params)
+                clazz.getDeclaredMethod(name, *params)
             } catch (e: NoSuchMethodException) {
                 null
             }
         }
 
-        operator fun invoke(method: Method?, `object`: Any?, vararg params: Any): Any? {
-            method!!.isAccessible = true
+        operator fun invoke(method: Method, `object`: Any, vararg params: Any): Any? {
+            method.isAccessible = true
             return try {
                 method.invoke(`object`, *params)
             } catch (e: InvocationTargetException) {
@@ -146,7 +151,7 @@ class SkullMaker {
             }
         }
 
-        private fun getDeclaredField(clazz: Class<*>, name: String): Field? {
+        fun getDeclaredField(clazz: Class<*>, name: String): Field? {
             return try {
                 clazz.getDeclaredField(name)
             } catch (e: NoSuchFieldException) {
@@ -154,4 +159,5 @@ class SkullMaker {
             }
         }
     }
+
 }

@@ -226,7 +226,7 @@ class EconomyNoteEvent(plugin: Man10EconomyNote?) : Listener {
                             val date = Date(usableTimeStamp * 1000)
                             val sdf = SimpleDateFormat("yyyy'-'MM'-'dd' 'HH':'mm':'ss")
                             val dateExpire = Date((usableTimeStamp + 31536000) * 1000)
-                            val id = plugin!!.mysql!!.executeGetId("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`final_value`,`value_left`,`monthly_interest`,`usable_after_days`,`memo`,`expired`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expire_date_time`,`expire_time`) " +
+                            val id = plugin!!.mysql!!.execute("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`final_value`,`value_left`,`monthly_interest`,`usable_after_days`,`memo`,`expired`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expire_date_time`,`expire_time`) " +
                                     "VALUES ('0','" + "PromissoryNote','" + ld.name + "','" + ld.uuid + "','" + ld.baseValue + "','" + ld.finalValue + "','" + ld.finalValue + "','" + ld.interest + "','" + ld.usableDays + "','','0','" + plugin!!.mysql!!.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','" + sdf.format(date) + "','" + usableTimeStamp + "','" + sdf.format(dateExpire) + "','" + (usableTimeStamp + 631536000) + "');")
                             val ink = ItemStack(Material.INK_SAC, 1, 9.toShort())
                             val inkMeta = ink.itemMeta

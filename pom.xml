@@ -54,6 +54,13 @@
             <version>1.7</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>red.man10.man10vaultapiplus</groupId>
+            <artifactId>Man10VaultAPIPlus</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/Man10VaultAPIPlus-1.0-SNAPSHOT.jar</systemPath>
+        </dependency>
     </dependencies>
     <build>
         <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
