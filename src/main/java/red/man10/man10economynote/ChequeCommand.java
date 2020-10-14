@@ -179,6 +179,10 @@ public class ChequeCommand implements CommandExecutor {
         for(int i = 0;i < list.length;i++){
             finalString = finalString + "§" + list[i];
         }
-        return finalString;
+        return finalString.replaceAll("0","０").replaceAll("1","１")
+                .replaceAll("2","２").replaceAll("3","３")
+                .replaceAll("4","４").replaceAll("5","５")
+                .replaceAll("6","６").replaceAll("8","８")
+                .replaceAll("7","７").replaceAll("9","９");
     }
 }

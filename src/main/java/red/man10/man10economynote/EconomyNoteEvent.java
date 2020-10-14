@@ -39,6 +39,7 @@ public class EconomyNoteEvent implements Listener {
             if(e.getPlayer().getInventory().getItemInMainHand().getType() == Material.PINK_DYE && e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).contains("§6====[Man10Bank]====" )){
                 plugin.slotData.put(e.getPlayer().getUniqueId(), e.getPlayer().getInventory().getHeldItemSlot());
                 String id = e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).replace("§6====[Man10Bank]====", "").replace("§", "");
+                Bukkit.broadcastMessage("[debug]ID:"+id);
                 LendData ld = plugin.getLendData(Integer.parseInt(id));
                 if(ld == null){
                     e.getPlayer().sendMessage("§e[§dMan10EconNote§e]§bデータが存在しません");
@@ -66,6 +67,7 @@ public class EconomyNoteEvent implements Listener {
             if(e.getPlayer().getInventory().getItemInMainHand().getType() == Material.LIGHT_BLUE_DYE &&e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).contains("§e====[Man10Bank]====" )){
                 plugin.slotData.put(e.getPlayer().getUniqueId(), e.getPlayer().getInventory().getHeldItemSlot());
                 String id = e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).replace("§e====[Man10Bank]====", "").replace("§", "");
+                Bukkit.broadcastMessage("[debug]ID:"+id);
                 Man10EconomyNote.NoteData nd = plugin.getNoteData(Integer.parseInt(id));
                 if(nd == null){
                     e.getPlayer().sendMessage("§e[§dMan10EconNote§e]§bデータが存在しません");
@@ -339,7 +341,11 @@ public class EconomyNoteEvent implements Listener {
         for(int i = 0;i < list.length;i++){
             finalString = finalString + "§" + list[i];
         }
-        return finalString;
+        return finalString.replaceAll("0","０").replaceAll("1","１")
+                .replaceAll("2","２").replaceAll("3","３")
+                .replaceAll("4","４").replaceAll("5","５")
+                .replaceAll("6","６").replaceAll("8","８")
+                .replaceAll("7","７").replaceAll("9","９");
     }
 
     Inventory withDrawInventory(){
