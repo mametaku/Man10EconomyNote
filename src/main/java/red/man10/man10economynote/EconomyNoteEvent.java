@@ -11,6 +11,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -35,6 +36,7 @@ public class EconomyNoteEvent implements Listener {
 
     @EventHandler
     public void onInteract(PlayerInteractEvent e){
+        if(e.getHand() == EquipmentSlot.HAND) return;
         if(e.getAction() == Action.RIGHT_CLICK_BLOCK || e.getAction() == Action.RIGHT_CLICK_AIR){
             if(e.getPlayer().getInventory().getItemInMainHand().getType() == Material.PINK_DYE && e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).contains("§6====[Man10Bank]====" )){
                 plugin.slotData.put(e.getPlayer().getUniqueId(), e.getPlayer().getInventory().getHeldItemSlot());
@@ -66,6 +68,7 @@ public class EconomyNoteEvent implements Listener {
             if(e.getPlayer().getInventory().getItemInMainHand().getType() == Material.LIGHT_BLUE_DYE &&e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).contains("§e====[Man10Bank]====" )){
                 plugin.slotData.put(e.getPlayer().getUniqueId(), e.getPlayer().getInventory().getHeldItemSlot());
                 String id = e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().get(0).replace("§e====[Man10Bank]====", "").replace("§", "");
+                Bukkit.broadcastMessage(id+"test");
                 Man10EconomyNote.NoteData nd = plugin.getNoteData(Integer.parseInt(id));
                 if(nd == null){
                     e.getPlayer().sendMessage("§e[§dMan10EconNote§e]§bデータが存在しません");
