@@ -272,7 +272,7 @@ public class EconomyNoteEvent implements Listener {
 //                                MoneyPoolObject pool = new MoneyPoolObject(vault.getPluginName(), MoneyPoolTerm.SHORT_TERM, MoneyPoolType.MEMORY, "Man10 EconomyNote MoneyFlow Pool");
 //                                vault.transferMoneyPlayerToPool(, pool.getId(), ld.finalValueLender, TransactionCategory.ECONOMY_NOTE, TransactionType.LEND, "PromissoryNote money send");
 //                                vault.transferMoneyPoolToPlayer(pool.getId(),p.getUniqueId(), ld.baseValue,TransactionCategory.ECONOMY_NOTE, TransactionType.LEND, "PromissoryNote money receive");
-//                                Bukkit.getPlayer(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID).getInventory().addItem(ink);
+                                Bukkit.getPlayer(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID).getInventory().addItem(ink);
 //                                pool.sendRemainderToCountry("PromissoryNote Tax Fee Send");
 
                                 if (vault.withdraw(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID,ld.baseValue)){
