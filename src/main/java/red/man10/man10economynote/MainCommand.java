@@ -28,7 +28,7 @@ public class MainCommand implements CommandExecutor {
         p.sendMessage("");
         p.sendMessage("§b/mlend 手形作成コマンド");
         p.sendMessage("§b/mcheque 小切手作成コマンド");
-        p.sendMessage("§b/mviewdebt 借金額を見る");
+        p.sendMessage("§b/mviewdebt <player> 借金額を見る");
         p.sendMessage("");
         p.sendMessage("§e§l---------------------------");
         p.sendMessage("§6§lCreated By Sho0");
