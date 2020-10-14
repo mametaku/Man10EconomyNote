@@ -6,7 +6,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import red.man10.man10vaultapiplus.JPYBalanceFormat;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -16,7 +15,7 @@ import java.util.UUID;
  * Created by sho on 2017/12/18.
  */
 public class ViewDebt implements CommandExecutor {
-    Man10EconomyNote plugin = null;
+    Man10EconomyNote plugin;
 
     public ViewDebt(Man10EconomyNote plugin){
         this.plugin = plugin;
@@ -27,7 +26,7 @@ public class ViewDebt implements CommandExecutor {
         if(args.length == 1){
             OfflinePlayer player = Bukkit.getOfflinePlayer(args[0]);
             if(!player.hasPlayedBefore()){
-                ((Player)sender).sendMessage("§e[§dMan10EconNote§e]§c" + args[0] + "さんはサーバーに存在しません");
+                sender.sendMessage("§e[§dMan10EconNote§e]§c" + args[0] + "さんはサーバーに存在しません");
                 return false;
             }
             Thread t = new Thread(() -> tellPlayerValue(((Player)sender), player.getUniqueId()));
@@ -41,7 +40,7 @@ public class ViewDebt implements CommandExecutor {
         OfflinePlayer pl = Bukkit.getOfflinePlayer(uuid);
         try {
             while (rs.next()){
-                p.sendMessage("§e[§dMan10EconNote§e]§b" + pl.getName() + "さんの総借金額は" + new JPYBalanceFormat(rs.getLong("sum(value_left)")).getString() + "円です");
+                p.sendMessage("§e[§dMan10EconNote§e]§b" + pl.getName() + "さんの総借金額は" + Man10EconomyNote.formatMoney(rs.getDouble("sum(value_left)")) + "円です");
             }
             rs.close();
             plugin.mysql.close();

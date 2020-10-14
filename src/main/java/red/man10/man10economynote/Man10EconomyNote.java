@@ -12,7 +12,7 @@ import java.util.UUID;
 public final class Man10EconomyNote extends JavaPlugin {
 
     public MySQLAPI mysql = null;
-    public VaultManager vault = null;
+    public static VaultManager vault = null;
 
     public HashMap<UUID,String> inventoryMap = new HashMap<>();
     public HashMap<UUID,NoteData> noteDataMap = new HashMap<>();
@@ -152,8 +152,8 @@ public final class Man10EconomyNote extends JavaPlugin {
         private String type;
         private String name;
         private UUID uuid;
-        private long value;
-        private long usable;
+        private double value;
+        private double usable;
         private int id;
 
         public NoteData(int id,String type,String name,UUID uuid,long finalValue,long usable){
@@ -188,11 +188,11 @@ public final class Man10EconomyNote extends JavaPlugin {
             return uuid;
         }
 
-        public long getValue(){
+        public double getValue(){
             return value;
         }
 
-        public long getUsabeTime(){
+        public double getUsabeTime(){
             return usable;
         }
 
@@ -262,5 +262,9 @@ public final class Man10EconomyNote extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    public static String formatMoney(double amount){
+        return String.format("%,.1f",amount);
     }
 }
