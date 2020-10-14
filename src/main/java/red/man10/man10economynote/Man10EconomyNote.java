@@ -3,7 +3,6 @@ package red.man10.man10economynote;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import red.man10.man10vaultapiplus.Man10VaultAPI;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -13,7 +12,7 @@ import java.util.UUID;
 public final class Man10EconomyNote extends JavaPlugin {
 
     public MySQLAPI mysql = null;
-    public Man10VaultAPI vault = null;
+    public static VaultManager vault = null;
 
     public HashMap<UUID,String> inventoryMap = new HashMap<>();
     public HashMap<UUID,NoteData> noteDataMap = new HashMap<>();
@@ -76,7 +75,8 @@ public final class Man10EconomyNote extends JavaPlugin {
         getCommand("mviewdebt").setExecutor(new ViewDebt(this));
         getCommand("man10economynote").setExecutor(new MainCommand(this));
         saveDefaultConfig();
-        vault = new Man10VaultAPI("Man10EconomyNote");
+//        vault = new Man10VaultAPI("Man10EconomyNote");
+        vault = new VaultManager(this);
         mysql = new MySQLAPI(this, "Man10EconNote");
         mysql.execute(mainDBQuery);
         mysql.execute(logDbQuery);
@@ -152,8 +152,8 @@ public final class Man10EconomyNote extends JavaPlugin {
         private String type;
         private String name;
         private UUID uuid;
-        private long value;
-        private long usable;
+        private double value;
+        private double usable;
         private int id;
 
         public NoteData(int id,String type,String name,UUID uuid,long finalValue,long usable){
@@ -188,11 +188,11 @@ public final class Man10EconomyNote extends JavaPlugin {
             return uuid;
         }
 
-        public long getValue(){
+        public double getValue(){
             return value;
         }
 
-        public long getUsabeTime(){
+        public double getUsabeTime(){
             return usable;
         }
 
@@ -262,5 +262,9 @@ public final class Man10EconomyNote extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    public static String formatMoney(double amount){
+        return String.format("%,.1f",amount);
     }
 }

@@ -15,13 +15,12 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import red.man10.man10vaultapiplus.JPYBalanceFormat;
-import red.man10.man10vaultapiplus.MoneyPoolObject;
-import red.man10.man10vaultapiplus.enums.*;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import static red.man10.man10economynote.Man10EconomyNote.vault;
 
 /**
  * Created by sho on 2017/12/15.
@@ -73,7 +72,7 @@ public class EconomyNoteEvent implements Listener {
                     plugin.slotData.remove(e.getPlayer().getUniqueId());
                     return;
                 }
-                e.getPlayer().openInventory(createChequeInventory(e.getPlayer(), nd.getValue()));
+                e.getPlayer().openInventory(createChequeInventory(e.getPlayer(), (long) nd.getValue()));
                 plugin.inventoryMap.put(e.getPlayer().getUniqueId(), "chequeConfirm");
                 plugin.noteDataMap.put(e.getPlayer().getUniqueId(), nd);
             }
@@ -82,155 +81,166 @@ public class EconomyNoteEvent implements Listener {
 
     @EventHandler
     public void onClick(InventoryClickEvent e){
+        
+        Player p = (Player) e.getWhoClicked();
+        
         if(!plugin.inventoryMap.isEmpty()){
-            if(plugin.inventoryMap.containsKey(e.getWhoClicked().getUniqueId())){
-                if(plugin.inventoryMap.get(e.getWhoClicked().getUniqueId()).equals("withdrawMenu")){
+            if(plugin.inventoryMap.containsKey(p.getUniqueId())){
+                if(plugin.inventoryMap.get(p.getUniqueId()).equals("withdrawMenu")){
                     e.setCancelled(true);
-                    LendData ld = plugin.lendDataMap.get(e.getWhoClicked().getUniqueId());
+                    LendData ld = plugin.lendDataMap.get(p.getUniqueId());
                     int s = e.getSlot();
                     if(s == 48){
-                        plugin.withdrawMenu.put(e.getWhoClicked().getUniqueId(), 0L);
+                        plugin.withdrawMenu.put(p.getUniqueId(), 0L);
                         for(int i = 0;i < 9;i++){
                             e.getInventory().setItem(i, new ItemStack(Material.AIR));
                         }
-                        redner(e.getInventory(),plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()));
+                        redner(e.getInventory(),plugin.withdrawMenu.get(p.getUniqueId()));
                     }
                     if(s == 42 || s == 43 || s == 51 || s == 52){
-                        e.getWhoClicked().closeInventory();
+                        p.closeInventory();
                         return;
                     }
                     if(s == 40 || s == 41 || s == 49 || s == 50){
-                        if(plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()) == 0){
-                            e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§c§l金額は1以上でなくてはなりません");
+                        if(plugin.withdrawMenu.get(p.getUniqueId()) == 0){
+                            p.sendMessage("§e[§dMan10EconNote§e]§c§l金額は1以上でなくてはなりません");
                             return;
                         }
                         Player target = Bukkit.getPlayer(ld.uuid);
                         if(target == null){
-                            e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§c§l現在プレイヤーはオンラインではありません");
+                            p.sendMessage("§e[§dMan10EconNote§e]§c§l現在プレイヤーはオンラインではありません");
                             return;
                         }
-                        if(plugin.vault.getBalance(target.getUniqueId()) < plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId())){
-                            e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§c§l現在プレイヤーお金を十分に持っていません");
+                        if(vault.getBalance(target.getUniqueId()) < plugin.withdrawMenu.get(p.getUniqueId())){
+                            p.sendMessage("§e[§dMan10EconNote§e]§c§l現在プレイヤーお金を十分に持っていません");
                             return;
                         }
-                        if(ld.valueLeft < plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId())){
-                            e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§c§l手形の残高を超す請求をしています");
+                        if(ld.valueLeft < plugin.withdrawMenu.get(p.getUniqueId())){
+                            p.sendMessage("§e[§dMan10EconNote§e]§c§l手形の残高を超す請求をしています");
                             return;
                         }
-                        plugin.vault.transferMoneyPlayerToPlayer(ld.uuid, e.getWhoClicked().getUniqueId(),plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()), TransactionCategory.ECONOMY_NOTE, TransactionType.COLLECT, "Economy note withdrawal by:" + e.getWhoClicked().getName() + " to:" + ld.name  + " price:" + plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()) );
-                        ItemStack item = e.getWhoClicked().getInventory().getItem(plugin.slotData.get(e.getWhoClicked().getUniqueId()));
+
+                        if (vault.withdraw(target.getUniqueId(), plugin.withdrawMenu.get(p.getUniqueId()))){
+                            vault.deposit(p.getUniqueId(),plugin.withdrawMenu.get(p.getUniqueId()));
+                        }
+
+//                        vault.transferMoneyPlayerToPlayer(ld.uuid, p.getUniqueId(),, TransactionCategory.ECONOMY_NOTE, TransactionType.COLLECT, "Economy note withdrawal by:" + p.getName() + " to:" + ld.name  + " price:" + plugin.withdrawMenu.get(p.getUniqueId()) );
+                        ItemStack item = p.getInventory().getItem(plugin.slotData.get(p.getUniqueId()));
                         ItemMeta itemMeta = item.getItemMeta();
                         List<String> lore = itemMeta.getLore();
-                        lore.set(4, "§d§l残金:" + String.valueOf(ld.valueLeft - plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId())));
+                        lore.set(4, "§d§l残金:" + (ld.valueLeft - plugin.withdrawMenu.get(p.getUniqueId())));
                         itemMeta.setLore(lore);
                         item.setItemMeta(itemMeta);
-                        plugin.mysql.execute("UPDATE man10_economy_note SET value_left ='" +  String.valueOf(ld.valueLeft - plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId())) + "' WHERE id ='" + ld.id + "'");
+                        plugin.mysql.execute("UPDATE man10_economy_note SET value_left ='" + (ld.valueLeft - plugin.withdrawMenu.get(p.getUniqueId())) + "' WHERE id ='" + ld.id + "'");
                         plugin.lendDataCacheMap.remove(ld.id);
-                        target.sendMessage("§e[§dMan10EconNote§e]§c§l" + e.getWhoClicked().getName() + "はあなたの約束手形から" + plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()) + "円引き出しました");
-                        plugin.createLog(ld.id,e.getWhoClicked().getName(), e.getWhoClicked().getUniqueId(), "RedeemPromissoryNote", plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()));
-                        e.getWhoClicked().closeInventory();
+                        target.sendMessage("§e[§dMan10EconNote§e]§c§l" + p.getName() + "はあなたの約束手形から" + plugin.withdrawMenu.get(p.getUniqueId()) + "円引き出しました");
+                        plugin.createLog(ld.id,p.getName(), p.getUniqueId(), "RedeemPromissoryNote", plugin.withdrawMenu.get(p.getUniqueId()));
+                        p.closeInventory();
                         if(ld.valueLeft == 0){
                             plugin.mysql.execute("UPDATE man10_economy_note SET expired ='1' WHERE id  ='" + ld.id + "'");
                         }
                         return;
                     }
-                    long val = plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId());
+                    long val = plugin.withdrawMenu.get(p.getUniqueId());
                     if(plugin.tenKeyNum.get(s) == null){
                         return;
                     }
-                    if(plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()) == 0){
-                        plugin.withdrawMenu.put(e.getWhoClicked().getUniqueId(), Long.valueOf(plugin.tenKeyNum.get(s)));
-                        redner(e.getInventory(),plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()));
+                    if(plugin.withdrawMenu.get(p.getUniqueId()) == 0){
+                        plugin.withdrawMenu.put(p.getUniqueId(), Long.valueOf(plugin.tenKeyNum.get(s)));
+                        redner(e.getInventory(),plugin.withdrawMenu.get(p.getUniqueId()));
                         return;
                     }
-                    if(plugin.vault.getBalance(plugin.lendDataMap.get(e.getWhoClicked().getUniqueId()).uuid) <= plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId())){
-                        e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§c§lプレイヤーはこれ以上お金を持っていません");
-                        if(!(plugin.vault.getBalance(ld.uuid) < 0)){
-                            plugin.withdrawMenu.put(e.getWhoClicked().getUniqueId(), (long) plugin.vault.getBalance(plugin.lendDataMap.get(e.getWhoClicked().getUniqueId()).uuid));
-                            redner(e.getInventory(),plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()));
+                    if(vault.getBalance(plugin.lendDataMap.get(p.getUniqueId()).uuid) <= plugin.withdrawMenu.get(p.getUniqueId())){
+                        p.sendMessage("§e[§dMan10EconNote§e]§c§lプレイヤーはこれ以上お金を持っていません");
+                        if(!(vault.getBalance(ld.uuid) < 0)){
+                            plugin.withdrawMenu.put(p.getUniqueId(), (long) vault.getBalance(plugin.lendDataMap.get(p.getUniqueId()).uuid));
+                            redner(e.getInventory(),plugin.withdrawMenu.get(p.getUniqueId()));
                         }
                         return;
                     }
-                    if(plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()) >= 999999999){
-                        plugin.withdrawMenu.put(e.getWhoClicked().getUniqueId(), 999999999L);
-                        redner(e.getInventory(),plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()));
+                    if(plugin.withdrawMenu.get(p.getUniqueId()) >= 999999999){
+                        plugin.withdrawMenu.put(p.getUniqueId(), 999999999L);
+                        redner(e.getInventory(),plugin.withdrawMenu.get(p.getUniqueId()));
                         return;
                     }
-                    plugin.withdrawMenu.put(e.getWhoClicked().getUniqueId(), Long.valueOf( String.valueOf(val) + plugin.tenKeyNum.get(s)));
-                    redner(e.getInventory(),plugin.withdrawMenu.get(e.getWhoClicked().getUniqueId()));
+                    plugin.withdrawMenu.put(p.getUniqueId(), Long.valueOf( String.valueOf(val) + plugin.tenKeyNum.get(s)));
+                    redner(e.getInventory(),plugin.withdrawMenu.get(p.getUniqueId()));
                 }
-                    if(plugin.inventoryMap.get(e.getWhoClicked().getUniqueId()).equals("chequeConfirm")){
+                    if(plugin.inventoryMap.get(p.getUniqueId()).equals("chequeConfirm")){
                         e.setCancelled(true);
                         int[] greens = {0,1,2,9,10,11,18,19,20};
                         int[] reds = {6,7,8,15,16,17,24,25,26};
                         for(int i = 0;i < greens.length;i++){
                             if(greens[i] == e.getSlot()){
-                                ((Player)e.getWhoClicked()).playSound(e.getWhoClicked().getLocation(), Sound.ENTITY_PLAYER_LEVELUP,1,1);
-                                Man10EconomyNote.NoteData nd = plugin.noteDataMap.get(e.getWhoClicked().getUniqueId());
-                                e.getWhoClicked().getInventory().setItem(plugin.slotData.get(e.getWhoClicked().getUniqueId()), new ItemStack(Material.AIR));
-                                plugin.slotData.remove(e.getWhoClicked().getUniqueId());
-                                plugin.createLog(nd.getId(),e.getWhoClicked().getName(),e.getWhoClicked().getUniqueId(),"RedeemCheque",nd.getValue());
+                                p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,1,1);
+                                Man10EconomyNote.NoteData nd = plugin.noteDataMap.get(p.getUniqueId());
+                                p.getInventory().setItem(plugin.slotData.get(p.getUniqueId()), new ItemStack(Material.AIR));
+                                plugin.slotData.remove(p.getUniqueId());
+                                plugin.createLog(nd.getId(),p.getName(),p.getUniqueId(),"RedeemCheque",nd.getValue());
                                 plugin.mysql.execute("UPDATE man10_economy_note SET expired ='1' WHERE id=" + nd.getId());
                                 plugin.noteCacheMap.remove(nd.getId());
-                                double toOldBalance = plugin.vault.getBalance(e.getWhoClicked().getUniqueId());
-                                plugin.vault.givePlayerMoney(e.getWhoClicked().getUniqueId(), nd.getValue(), TransactionType.REDEEM_CHEQUE, "Man10 Cheque Collected by :" + e.getWhoClicked().getName() + " from:" + nd.getName() + " value:" + nd.getValue(), TransactionLogType.RAW);
-                                plugin.vault.createTransactionLog(TransactionCategory.VOID, TransactionType.REDEEM_CHEQUE, plugin.vault.getPluginName(), nd.getValue(), nd.getName(), nd.getUuid(), e.getWhoClicked().getName(), e.getWhoClicked().getUniqueId(), 0, 0, toOldBalance, toOldBalance+nd.getValue(), -1, TransactionLogType.RESULT, "Man10 Cheque Collected by :" + e.getWhoClicked().getName() + " from:" + nd.getName() + " value:" + nd.getValue());
-                                e.getWhoClicked().closeInventory();
+//                                double toOldBalance = vault.getBalance(p.getUniqueId());
+
+                                vault.deposit(p.getUniqueId(),nd.getValue());
+
+//                                vault.givePlayerMoney(p.getUniqueId(), nd.getValue(), TransactionType.REDEEM_CHEQUE, "Man10 Cheque Collected by :" + p.getName() + " from:" + nd.getName() + " value:" + nd.getValue(), TransactionLogType.RAW);
+//                                vault.createTransactionLog(TransactionCategory.VOID, TransactionType.REDEEM_CHEQUE, vault.getPluginName(), nd.getValue(), nd.getName(), nd.getUuid(), p.getName(), p.getUniqueId(), 0, 0, toOldBalance, toOldBalance+nd.getValue(), -1, TransactionLogType.RESULT, "Man10 Cheque Collected by :" + p.getName() + " from:" + nd.getName() + " value:" + nd.getValue());
+                                p.closeInventory();
                             }
                         }
-                        for(int i = 0;i < reds.length;i++){
-                            if(reds[i] == e.getSlot()){
-                                e.getWhoClicked().closeInventory();
+                        for (int red : reds) {
+                            if (red == e.getSlot()) {
+                                p.closeInventory();
                             }
                         }
                         return;
                     }
-                    if(plugin.inventoryMap.get(e.getWhoClicked().getUniqueId()).equals("LendSendConfirm")){
+                    if(plugin.inventoryMap.get(p.getUniqueId()).equals("LendSendConfirm")){
                         e.setCancelled(true);
                         int[] greens = {0,1,2,9,10,11,18,19,20};
                         int[] reds = {6,7,8,15,16,17,24,25,26};
-                        for(int i = 0;i < greens.length;i++){
-                            if(greens[i] == e.getSlot()){
-                                LendData ld = plugin.lendDataMap.get(e.getWhoClicked().getUniqueId());
-                                if(Bukkit.getPlayer(ld.uuid) == null){
-                                    e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§cプレイヤーがオフラインになりました");
-                                    e.getWhoClicked().closeInventory();
+                        for (int green : greens) {
+                            if (green == e.getSlot()) {
+                                LendData ld = plugin.lendDataMap.get(p.getUniqueId());
+                                if (Bukkit.getPlayer(ld.uuid) == null) {
+                                    p.sendMessage("§e[§dMan10EconNote§e]§cプレイヤーがオフラインになりました");
+                                    p.closeInventory();
                                 }
-                                e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§a条件を提示しました");
-                                SentLendDataData data = new SentLendDataData(ld, e.getWhoClicked().getName(), e.getWhoClicked().getUniqueId());
-                                Bukkit.getPlayer(ld.uuid).sendMessage("§e[§dMan10EconNote§e]§e§l" + e.getWhoClicked().getName() + "さんが借金条件を提示しました /mlend view");
-                                plugin.sentLendDataDataHashMap.put(Bukkit.getPlayer(ld.uuid).getUniqueId(), data);
-                                e.getWhoClicked().closeInventory();
+                                p.sendMessage("§e[§dMan10EconNote§e]§a条件を提示しました");
+                                SentLendDataData data = new SentLendDataData(ld, p.getName(), p.getUniqueId());
+                                Bukkit.getPlayer(ld.uuid).sendMessage("§e[§dMan10EconNote§e]§e§l" + p.getName() + "さんが借金条件を提示しました /mlend view");
+                                plugin.sentLendDataDataHashMap.put(ld.uuid, data);
+                                p.closeInventory();
                             }
                         }
 
                         for(int i = 0;i < reds.length;i++){
                             if(reds[i] == e.getSlot()){
-                                e.getWhoClicked().closeInventory();
+                                p.closeInventory();
                             }
                         }
                         return;
                     }
-                    if(plugin.inventoryMap.get(e.getWhoClicked().getUniqueId()).equals("LendConfirm")){
+                    if(plugin.inventoryMap.get(p.getUniqueId()).equals("LendConfirm")){
                         e.setCancelled(true);
                         int[] greens = {0,1,2,9,10,11,18,19,20};
                         int[] reds = {6,7,8,15,16,17,24,25,26};
                         for(int i = 0;i < greens.length;i++){
                             if(greens[i] == e.getSlot()){
-                                Player lender = Bukkit.getPlayer(plugin.sentLendDataDataHashMap.get(e.getWhoClicked().getUniqueId()).fromUUID);
+                                Player lender = Bukkit.getPlayer(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID);
                                 if(lender == null){
-                                    e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§c§l提示者がオフラインになりました");
+                                    p.sendMessage("§e[§dMan10EconNote§e]§c§l提示者がオフラインになりました");
                                     return;
                                 }
                                 if(lender.getInventory().firstEmpty() == -1){
-                                    e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§c§l提示者のインベントリがいっぱいです");
+                                    p.sendMessage("§e[§dMan10EconNote§e]§c§l提示者のインベントリがいっぱいです");
                                     return;
                                 }
-                                if(plugin.vault.getBalance(plugin.sentLendDataDataHashMap.get(e.getWhoClicked().getUniqueId()).fromUUID) <= plugin.sentLendDataDataHashMap.get(e.getWhoClicked().getUniqueId()).data.finalValueLender){
-                                    e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§c§l提示者の所持金が提示金額に達していません");
+                                if(vault.getBalance(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID) <= plugin.sentLendDataDataHashMap.get(p.getUniqueId()).data.finalValueLender){
+                                    p.sendMessage("§e[§dMan10EconNote§e]§c§l提示者の所持金が提示金額に達していません");
                                     return;
                                 }
-                                LendData ld = plugin.sentLendDataDataHashMap.get(e.getWhoClicked().getUniqueId()).data;
+                                LendData ld = plugin.sentLendDataDataHashMap.get(p.getUniqueId()).data;
 
                                 long usableTimeStamp = ld.usableDays * 24 * 60 * 60 + System.currentTimeMillis() / 1000;
                                 java.util.Date date = new java.util.Date(usableTimeStamp * 1000);
@@ -258,20 +268,25 @@ public class EconomyNoteEvent implements Listener {
                                 inkMeta.setLore(inkLore);
                                 ink.setItemMeta(inkMeta);
 
-                                plugin.createLog(id,plugin.sentLendDataDataHashMap.get(e.getWhoClicked().getUniqueId()).fromName,plugin.sentLendDataDataHashMap.get(e.getWhoClicked().getUniqueId()).fromUUID,"CreatePromissoryNote",ld.finalValue);
-                                MoneyPoolObject pool = new MoneyPoolObject(plugin.vault.getPluginName(), MoneyPoolTerm.SHORT_TERM, MoneyPoolType.MEMORY, "Man10 EconomyNote MoneyFlow Pool");
-                                plugin.vault.transferMoneyPlayerToPool(plugin.sentLendDataDataHashMap.get(e.getWhoClicked().getUniqueId()).fromUUID, pool.getId(), ld.finalValueLender, TransactionCategory.ECONOMY_NOTE, TransactionType.LEND, "PromissoryNote money send");
-                                plugin.vault.transferMoneyPoolToPlayer(pool.getId(),e.getWhoClicked().getUniqueId(), ld.baseValue,TransactionCategory.ECONOMY_NOTE, TransactionType.LEND, "PromissoryNote money receive");
-                                Bukkit.getPlayer(plugin.sentLendDataDataHashMap.get(e.getWhoClicked().getUniqueId()).fromUUID).getInventory().addItem(ink);
-                                pool.sendRemainderToCountry("PromissoryNote Tax Fee Send");
-                                e.getWhoClicked().sendMessage("§e[§dMan10EconNote§e]§a取引が成立しました");
-                                e.getWhoClicked().closeInventory();
+                                plugin.createLog(id,plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromName,plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID,"CreatePromissoryNote",ld.finalValue);
+//                                MoneyPoolObject pool = new MoneyPoolObject(vault.getPluginName(), MoneyPoolTerm.SHORT_TERM, MoneyPoolType.MEMORY, "Man10 EconomyNote MoneyFlow Pool");
+//                                vault.transferMoneyPlayerToPool(, pool.getId(), ld.finalValueLender, TransactionCategory.ECONOMY_NOTE, TransactionType.LEND, "PromissoryNote money send");
+//                                vault.transferMoneyPoolToPlayer(pool.getId(),p.getUniqueId(), ld.baseValue,TransactionCategory.ECONOMY_NOTE, TransactionType.LEND, "PromissoryNote money receive");
+                                Bukkit.getPlayer(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID).getInventory().addItem(ink);
+//                                pool.sendRemainderToCountry("PromissoryNote Tax Fee Send");
+
+                                if (vault.withdraw(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID,ld.baseValue)){
+                                    vault.deposit(p.getUniqueId(),ld.baseValue);
+                                }
+
+                                p.sendMessage("§e[§dMan10EconNote§e]§a取引が成立しました");
+                                p.closeInventory();
                             }
                         }
                         for(int i = 0;i < reds.length;i++){
                             if(reds[i] == e.getSlot()){
-                                e.getWhoClicked().closeInventory();
-                                plugin.sentLendDataDataHashMap.remove(e.getWhoClicked().getUniqueId());
+                                p.closeInventory();
+                                plugin.sentLendDataDataHashMap.remove(p.getUniqueId());
                             }
                         }
                         return;
@@ -306,17 +321,17 @@ public class EconomyNoteEvent implements Listener {
     }
 
     Inventory createChequeInventory(Player p, long value){
-        Inventory inv = Bukkit.createInventory(null, 27,"§4§l" + new JPYBalanceFormat(value).getString() + "円と換金しますか？");
+        Inventory inv = Bukkit.createInventory(null, 27,"§4§l" + Man10EconomyNote.formatMoney(value) + "円と換金しますか？");
         ItemStack green = new ItemStack(Material.GREEN_STAINED_GLASS_PANE,1);
         ItemMeta itemMeta = green.getItemMeta();
         itemMeta.setDisplayName("§a§l" + value + "円と換金する");
         List<String> lore = new ArrayList<>();
-        lore.add("§a§l(" + new JPYBalanceFormat(value).getString()+ "円)");
+        lore.add("§a§l(" + Man10EconomyNote.formatMoney(value)+ "円)");
         itemMeta.setLore(lore);
         green.setItemMeta(itemMeta);
         int[] greens = {0,1,2,9,10,11,18,19,20};
-        for(int i = 0;i < greens.length;i++){
-            inv.setItem(greens[i], green);
+        for (int j : greens) {
+            inv.setItem(j, green);
         }
 
         ItemStack red = new ItemStack(Material.RED_STAINED_GLASS_PANE,1);
@@ -325,8 +340,8 @@ public class EconomyNoteEvent implements Listener {
         red.setItemMeta(itemMetaRed);
 
         int[] reds = {6,7,8,15,16,17,24,25,26};
-        for(int i = 0;i < reds.length;i++){
-            inv.setItem(reds[i], red);
+        for (int j : reds) {
+            inv.setItem(j, red);
         }
 
         inv.setItem(13, p.getInventory().getItemInMainHand());

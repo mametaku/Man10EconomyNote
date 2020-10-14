@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import red.man10.man10vaultapiplus.JPYBalanceFormat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +58,7 @@ public class OPChequeCommand implements CommandExecutor {
                 lore.add("§e====[Man10Bank]====" + format(String.valueOf(res.getId())));
                 lore.add("");
                 lore.add("§a§l発行者:" + p.getName());
-                lore.add("§a§l金額:" + new JPYBalanceFormat(i).getString() + "円") ;
+                lore.add("§a§l金額:" + Man10EconomyNote.formatMoney(i) + "円") ;
                 lore.add("");
                 lore.add("§e==================");
                 itemMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1,true);
@@ -92,7 +91,7 @@ public class OPChequeCommand implements CommandExecutor {
                 lore.add("§e====[Man10Bank]====" + format(String.valueOf(res.getId())));
                 lore.add("");
                 lore.add("§a§l発行者:" + p.getName());
-                lore.add("§a§l金額:" + new JPYBalanceFormat(i).getString() + "円") ;
+                lore.add("§a§l金額:" + Man10EconomyNote.formatMoney(i) + "円") ;
                 if(args[1] != null || !args[1].equalsIgnoreCase("")){
                     lore.add("§d§lメモ:" + args[1].replaceAll("&", "§").replaceAll("_", " "));
                 }
