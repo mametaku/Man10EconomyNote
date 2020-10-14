@@ -250,6 +250,7 @@ public class EconomyNoteEvent implements Listener {
                                         "VALUES ('0','" + "PromissoryNote','" + ld.name + "','" + ld.uuid + "','" + ld.baseValue + "','" + ld.finalValue + "','" + ld.finalValue + "','" + ld.interest + "','" + ld.usableDays + "','','0','" + plugin.mysql.currentTimeNoBracket() + "','" + System.currentTimeMillis()/1000 + "','" + sdf.format(date) + "','" + usableTimeStamp + "','" + sdf.format(dateExpire) + "','" + (usableTimeStamp + 631536000) + "');");
                                 ItemStack ink = new ItemStack(Material.PINK_DYE, 1);
                                 ItemMeta inkMeta = ink.getItemMeta();
+                                inkMeta.setCustomModelData(10);
                                 inkMeta.setDisplayName("§c§l約束手形§7§l(Promissory Note)");
                                 inkMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
                                 inkMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
