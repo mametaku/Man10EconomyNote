@@ -128,6 +128,7 @@ public class LendCommand implements CommandExecutor {
 
         ItemStack ink = new ItemStack(Material.PINK_DYE, 1);
         ItemMeta inkMeta = ink.getItemMeta();
+        inkMeta.setCustomModelData(10);
         inkMeta.setDisplayName("§c§l約束手形§7§l(Promissory Note)");
         inkMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
         inkMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
@@ -190,6 +191,7 @@ public class LendCommand implements CommandExecutor {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy'年'MM'月'dd'日'E'曜日'k'時'mm'分'ss'秒'");
         ItemStack ink = new ItemStack(Material.PINK_DYE,1);
         ItemMeta inkMeta = ink.getItemMeta();
+        inkMeta.setCustomModelData(10);
         inkMeta.setDisplayName("§c§l約束手形§7§l(Promissory Note)");
         inkMeta.addEnchant(Enchantment.PROTECTION_ENVIRONMENTAL, 1, true);
         inkMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);

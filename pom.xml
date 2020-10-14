@@ -73,7 +73,7 @@
         <dependency>
             <groupId>red.man10</groupId>
             <artifactId>Man10VaultAPIPlus</artifactId>
-            <version>1.0</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${basedir}/libs/man10VaultAPIPlus-1.0-SNAPSHOT.jar</systemPath>
         </dependency>

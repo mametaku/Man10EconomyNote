@@ -53,6 +53,7 @@ public class OPChequeCommand implements CommandExecutor {
 
                 ItemStack blueDye = new ItemStack(Material.LIGHT_BLUE_DYE, 1);
                 ItemMeta itemMeta = blueDye.getItemMeta();
+                itemMeta.setCustomModelData(10);
                 itemMeta.setDisplayName("§b§l小切手§7§l(Cheque)");
                 List<String> lore = new ArrayList<>();
                 lore.add("§e====[Man10Bank]====" + format(String.valueOf(res.getId())));
@@ -86,6 +87,7 @@ public class OPChequeCommand implements CommandExecutor {
                 ItemStack blueDye = new ItemStack(Material.LIGHT_BLUE_DYE, 1);
                 ItemMeta itemMeta = blueDye.getItemMeta();
                 itemMeta.setDisplayName("§b§l小切手§7§l(Cheque)");
+                itemMeta.setCustomModelData(10);
                 List<String> lore = new ArrayList<>();
                 lore.add("§e====[Man10Bank]====" + format(String.valueOf(res.getId())));
                 lore.add("");
