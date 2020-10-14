@@ -403,7 +403,7 @@ public class EconomyNoteEvent implements Listener {
         i8.setItemMeta(i8m);
         i9.setItemMeta(i9m);
 
-        ItemStack blueGlass = new ItemStack(Material.BLUE_STAINED_GLASS_PANE,1,(short) 11);
+        ItemStack blueGlass = new ItemStack(Material.BLUE_STAINED_GLASS_PANE,1);
         ItemMeta itemMeta = blueGlass.getItemMeta();
         itemMeta.setDisplayName(" ");
         blueGlass.setItemMeta(itemMeta);
