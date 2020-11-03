@@ -30,14 +30,14 @@ public class LendData {
         this.usableDays = usableDays;
     }
 
-    public boolean hasNull(){
-        try{
-            if(name == null || uuid == null){
-                return true;
-            }
-            return false;
-        }catch (NullPointerException e){
-            return true;
-        }
-    }
+//    public boolean hasNull(){
+//        try{
+//            if(name == null || uuid == null){
+//                return true;
+//            }
+//            return false;
+//        }catch (NullPointerException e){
+//            return true;
+//        }
+//    }
 }

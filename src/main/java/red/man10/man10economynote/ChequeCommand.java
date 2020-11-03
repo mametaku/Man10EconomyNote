@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static red.man10.man10economynote.EconomyNoteEvent.format;
+
 
 /**
  * Created by sho on 2017/12/15.
@@ -52,7 +54,7 @@ public class ChequeCommand implements CommandExecutor {
                     p.sendMessage("§e[§dMan10EconNote§e]§c金額は1以上でなくてはなりません");
                     return false;
                 }
-                if(plugin.vault.getBalance(p.getUniqueId()) < i){
+                if(Man10EconomyNote.vault.getBalance(p.getUniqueId()) < i){
                     p.sendMessage("§e[§dMan10EconNote§e]§c所持金額が足りません");
                     return false;
                 }
@@ -96,7 +98,7 @@ public class ChequeCommand implements CommandExecutor {
                     p.sendMessage("§e[§dMan10EconNote§e]§cメモが長すぎます");
                     return false;
                 }
-                if(plugin.vault.getBalance(p.getUniqueId()) < i){
+                if(Man10EconomyNote.vault.getBalance(p.getUniqueId()) < i){
                     p.sendMessage("§e[§dMan10EconNote§e]§c所持金額が足りません");
                     return false;
                 }
@@ -167,24 +169,23 @@ public class ChequeCommand implements CommandExecutor {
     private ChequeResult createChequeData(String name, UUID uuid,long value,String memo){
         if(memo == null || memo.equalsIgnoreCase("")){
             int id = plugin.mysql.executeGetId("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`memo`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expired`,`final_value`) VALUES ('0','Cheque','" + name + "','" + uuid + "','" + value + "','" + memo + "','" + plugin.mysql.currentTimeNoBracket() + "','" + System.currentTimeMillis()/1000 + "','" + plugin.mysql.currentTimeNoBracket() + "','" + System.currentTimeMillis()/1000 + "','0','" + value + "');");
-            ChequeResult ch = new ChequeResult(id, false);
-            return ch;
+            return new ChequeResult(id, false);
         }
         int id = plugin.mysql.executeGetId("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`memo`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expired`,`final_value`) VALUES ('0','Cheque','" + name + "','" + uuid + "','" + value + "','" + memo + "','" + plugin.mysql.currentTimeNoBracket() + "','" + System.currentTimeMillis()/1000 + "','" + plugin.mysql.currentTimeNoBracket() + "','" + System.currentTimeMillis()/1000 + "','0','" + value + "');");
-        ChequeResult ch = new ChequeResult(id, true);
-        return ch;
+        return new ChequeResult(id, true);
     }
 
-    private String format(String string){
-        char[] list = string.toCharArray();
-        String finalString = "";
-        for(int i = 0;i < list.length;i++){
-            finalString = finalString + "§" + list[i];
-        }
-        return finalString.replaceAll("0","０").replaceAll("1","１")
-                .replaceAll("2","２").replaceAll("3","３")
-                .replaceAll("4","４").replaceAll("5","５")
-                .replaceAll("6","６").replaceAll("8","８")
-                .replaceAll("7","７").replaceAll("9","９");
-    }
+//    private String format(String string){
+//        char[] list = string.toCharArray();
+//        String finalString = "";
+//        for (char c : list) {
+//            finalString = finalString + "§" + c;
+//        }
+//        return finalString.replaceAll("0","０").replaceAll("1","１")
+//                .replaceAll("2","２").replaceAll("3","３")
+//                .replaceAll("4","４").replaceAll("5","５")
+//                .replaceAll("6","６").replaceAll("8","８")
+//                .replaceAll("7","７").replaceAll("9","９");
+//    }
+
 }

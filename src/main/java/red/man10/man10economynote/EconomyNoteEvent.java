@@ -26,7 +26,10 @@ import static red.man10.man10economynote.Man10EconomyNote.vault;
  * Created by sho on 2017/12/15.
  */
 public class EconomyNoteEvent implements Listener {
-    Man10EconomyNote plugin = null;
+    Man10EconomyNote plugin;
+
+    static int[] greens = {0,1,2,9,10,11,18,19,20};
+    static int[] reds = {6,7,8,15,16,17,24,25,26};
 
     public EconomyNoteEvent(Man10EconomyNote plugin){
         this.plugin = plugin;
@@ -168,8 +171,8 @@ public class EconomyNoteEvent implements Listener {
                 }
                     if(plugin.inventoryMap.get(p.getUniqueId()).equals("chequeConfirm")){
                         e.setCancelled(true);
-                        int[] greens = {0,1,2,9,10,11,18,19,20};
-                        int[] reds = {6,7,8,15,16,17,24,25,26};
+//                        int[] greens = {0,1,2,9,10,11,18,19,20};
+//                        int[] reds = {6,7,8,15,16,17,24,25,26};
                         for(int i = 0;i < greens.length;i++){
                             if(greens[i] == e.getSlot()){
                                 p.playSound(p.getLocation(), Sound.ENTITY_PLAYER_LEVELUP,1,1);
@@ -197,8 +200,7 @@ public class EconomyNoteEvent implements Listener {
                     }
                     if(plugin.inventoryMap.get(p.getUniqueId()).equals("LendSendConfirm")){
                         e.setCancelled(true);
-                        int[] greens = {0,1,2,9,10,11,18,19,20};
-                        int[] reds = {6,7,8,15,16,17,24,25,26};
+
                         for (int green : greens) {
                             if (green == e.getSlot()) {
                                 LendData ld = plugin.lendDataMap.get(p.getUniqueId());
@@ -214,29 +216,30 @@ public class EconomyNoteEvent implements Listener {
                             }
                         }
 
-                        for(int i = 0;i < reds.length;i++){
-                            if(reds[i] == e.getSlot()){
+                        for (int red : reds) {
+                            if (red == e.getSlot()) {
                                 p.closeInventory();
+                                return;
                             }
                         }
-                        return;
+
                     }
                     if(plugin.inventoryMap.get(p.getUniqueId()).equals("LendConfirm")){
                         e.setCancelled(true);
-                        int[] greens = {0,1,2,9,10,11,18,19,20};
-                        int[] reds = {6,7,8,15,16,17,24,25,26};
-                        for(int i = 0;i < greens.length;i++){
-                            if(greens[i] == e.getSlot()){
+//                        int[] greens = {0,1,2,9,10,11,18,19,20};
+//                        int[] reds = {6,7,8,15,16,17,24,25,26};
+                        for (int green : greens) {
+                            if (green == e.getSlot()) {
                                 Player lender = Bukkit.getPlayer(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID);
-                                if(lender == null){
+                                if (lender == null) {
                                     p.sendMessage("§e[§dMan10EconNote§e]§c§l提示者がオフラインになりました");
                                     return;
                                 }
-                                if(lender.getInventory().firstEmpty() == -1){
+                                if (lender.getInventory().firstEmpty() == -1) {
                                     p.sendMessage("§e[§dMan10EconNote§e]§c§l提示者のインベントリがいっぱいです");
                                     return;
                                 }
-                                if(vault.getBalance(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID) <= plugin.sentLendDataDataHashMap.get(p.getUniqueId()).data.finalValueLender){
+                                if (vault.getBalance(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID) <= plugin.sentLendDataDataHashMap.get(p.getUniqueId()).data.finalValueLender) {
                                     p.sendMessage("§e[§dMan10EconNote§e]§c§l提示者の所持金が提示金額に達していません");
                                     return;
                                 }
@@ -246,8 +249,7 @@ public class EconomyNoteEvent implements Listener {
                                 java.util.Date date = new java.util.Date(usableTimeStamp * 1000);
                                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy'-'MM'-'dd' 'HH':'mm':'ss");
                                 java.util.Date dateExpire = new java.util.Date((usableTimeStamp + 31536000) * 1000);
-                                int id = plugin.mysql.executeGetId("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`final_value`,`value_left`,`monthly_interest`,`usable_after_days`,`memo`,`expired`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expire_date_time`,`expire_time`) " +
-                                        "VALUES ('0','" + "PromissoryNote','" + ld.name + "','" + ld.uuid + "','" + ld.baseValue + "','" + ld.finalValue + "','" + ld.finalValue + "','" + ld.interest + "','" + ld.usableDays + "','','0','" + plugin.mysql.currentTimeNoBracket() + "','" + System.currentTimeMillis()/1000 + "','" + sdf.format(date) + "','" + usableTimeStamp + "','" + sdf.format(dateExpire) + "','" + (usableTimeStamp + 631536000) + "');");
+                                int id = plugin.mysql.executeGetId("INSERT INTO man10_economy_note (`id`,`type`,`wired_to_name`,`wired_to_uuid`,`base_value`,`final_value`,`value_left`,`monthly_interest`,`usable_after_days`,`memo`,`expired`,`creation_date_time`,`creation_time`,`usable_date_time`,`usable_time`,`expire_date_time`,`expire_time`) " + "VALUES ('0','" + "PromissoryNote','" + ld.name + "','" + ld.uuid + "','" + ld.baseValue + "','" + ld.finalValue + "','" + ld.finalValue + "','" + ld.interest + "','" + ld.usableDays + "','','0','" + plugin.mysql.currentTimeNoBracket() + "','" + System.currentTimeMillis() / 1000 + "','" + sdf.format(date) + "','" + usableTimeStamp + "','" + sdf.format(dateExpire) + "','" + (usableTimeStamp + 631536000) + "');");
                                 ItemStack ink = new ItemStack(Material.PINK_DYE, 1);
                                 ItemMeta inkMeta = ink.getItemMeta();
                                 inkMeta.setCustomModelData(10);
@@ -269,28 +271,23 @@ public class EconomyNoteEvent implements Listener {
                                 inkMeta.setLore(inkLore);
                                 ink.setItemMeta(inkMeta);
 
-                                plugin.createLog(id,plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromName,plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID,"CreatePromissoryNote",ld.finalValue);
-//                                MoneyPoolObject pool = new MoneyPoolObject(vault.getPluginName(), MoneyPoolTerm.SHORT_TERM, MoneyPoolType.MEMORY, "Man10 EconomyNote MoneyFlow Pool");
-//                                vault.transferMoneyPlayerToPool(, pool.getId(), ld.finalValueLender, TransactionCategory.ECONOMY_NOTE, TransactionType.LEND, "PromissoryNote money send");
-//                                vault.transferMoneyPoolToPlayer(pool.getId(),p.getUniqueId(), ld.baseValue,TransactionCategory.ECONOMY_NOTE, TransactionType.LEND, "PromissoryNote money receive");
+                                plugin.createLog(id, plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromName, plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID, "CreatePromissoryNote", ld.finalValue);
                                 Bukkit.getPlayer(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID).getInventory().addItem(ink);
-//                                pool.sendRemainderToCountry("PromissoryNote Tax Fee Send");
 
-                                if (vault.withdraw(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID,ld.finalValue)){
-                                    vault.deposit(p.getUniqueId(),ld.baseValue);
+                                if (vault.withdraw(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID, ld.finalValue)) {
+                                    vault.deposit(p.getUniqueId(), ld.baseValue);
                                 }
 
                                 p.sendMessage("§e[§dMan10EconNote§e]§a取引が成立しました");
                                 p.closeInventory();
                             }
                         }
-                        for(int i = 0;i < reds.length;i++){
-                            if(reds[i] == e.getSlot()){
+                        for (int red : reds) {
+                            if (red == e.getSlot()) {
                                 p.closeInventory();
                                 plugin.sentLendDataDataHashMap.remove(p.getUniqueId());
                             }
                         }
-                        return;
                     }
             }
         }
@@ -349,13 +346,13 @@ public class EconomyNoteEvent implements Listener {
         return inv;
     }
 
-    private String format(String string){
+    static String format(String string){
         char[] list = string.toCharArray();
-        String finalString = "";
-        for(int i = 0;i < list.length;i++){
-            finalString = finalString + "§" + list[i];
+        StringBuilder finalString = new StringBuilder();
+        for (char c : list) {
+            finalString.append("§").append(c);
         }
-        return finalString.replaceAll("0","０").replaceAll("1","１")
+        return finalString.toString().replaceAll("0","０").replaceAll("1","１")
                 .replaceAll("2","２").replaceAll("3","３")
                 .replaceAll("4","４").replaceAll("5","５")
                 .replaceAll("6","６").replaceAll("8","８")
@@ -425,8 +422,8 @@ public class EconomyNoteEvent implements Listener {
         blueGlass.setItemMeta(itemMeta);
 
         int[] bGlass = {9,10,11,12,13,14,15,16,17,18,22,23,24,25,26,27,31,32,33,34,35,36,44,45,53};
-        for(int i = 0;i < bGlass.length;i++){
-            inv.setItem(bGlass[i],blueGlass);
+        for (int glass : bGlass) {
+            inv.setItem(glass, blueGlass);
         }
         ItemStack B = new SkullMaker().withSkinUrl("http://textures.minecraft.net/texture/3d43e5b3e8d14ab8f9d2318e56de4aa026e3241112426c5edd5015e6b9a6b71").withName("§1§l§nBANK").build();
         ItemStack A = new SkullMaker().withSkinUrl("http://textures.minecraft.net/texture/adb5f1a9f58c852b473b3855dce27f8bf40db7e4bd2951e62f28d61c3694ff").withName("§1§l§nBANK").build();

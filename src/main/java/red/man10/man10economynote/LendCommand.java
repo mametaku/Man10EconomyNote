@@ -138,7 +138,7 @@ public class LendCommand implements CommandExecutor {
         inkLore.add("§c§l発行者:" + p.getName());
         inkLore.add("§c§l金額:" + ld.finalValue);
         long usableTimeStamp = ld.usableDays * 24 * 60 * 60 + System.currentTimeMillis() / 1000;
-        java.util.Date time = new java.util.Date((long) usableTimeStamp * 1000);
+        java.util.Date time = new java.util.Date(usableTimeStamp * 1000);
         inkLore.add("§d§l残金:" + ld.finalValue);
         inkLore.add("§4使用可能日");
         inkLore.add("§4(" + sdf.format(time) + ")");
@@ -169,8 +169,8 @@ public class LendCommand implements CommandExecutor {
         itemMeta.setDisplayName("§a§l承諾する");
         green.setItemMeta(itemMeta);
         int[] greens = {0, 1, 2, 9, 10, 11, 18, 19, 20};
-        for (int i = 0; i < greens.length; i++) {
-            inv.setItem(greens[i], green);
+        for (int k : greens) {
+            inv.setItem(k, green);
         }
 
         ItemStack red = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
@@ -179,8 +179,8 @@ public class LendCommand implements CommandExecutor {
         red.setItemMeta(itemMetaRed);
 
         int[] reds = {6, 7, 8, 15, 16, 17, 24, 25, 26};
-        for (int i = 0; i < reds.length; i++) {
-            inv.setItem(reds[i], red);
+        for (int j : reds) {
+            inv.setItem(j, red);
         }
 
         return inv;
@@ -217,8 +217,8 @@ public class LendCommand implements CommandExecutor {
         itemMeta.setDisplayName("§a§l提示する");
         green.setItemMeta(itemMeta);
         int[] greens = {0, 1, 2, 9, 10, 11, 18, 19, 20};
-        for (int i = 0; i < greens.length; i++) {
-            inv.setItem(greens[i], green);
+        for (int k : greens) {
+            inv.setItem(k, green);
         }
 
         ItemStack red = new ItemStack(Material.RED_STAINED_GLASS_PANE, 1);
@@ -227,18 +227,18 @@ public class LendCommand implements CommandExecutor {
         red.setItemMeta(itemMetaRed);
 
         int[] reds = {6, 7, 8, 15, 16, 17, 24, 25, 26};
-        for (int i = 0; i < reds.length; i++) {
-            inv.setItem(reds[i], red);
+        for (int j : reds) {
+            inv.setItem(j, red);
         }
         return inv;
     }
 
-    private String format(String string){
-        char[] list = string.toCharArray();
-        String finalString = "";
-        for(int i = 0;i < list.length;i++){
-            finalString = finalString + "§" + list[i];
-        }
-        return finalString;
-    }
+//    private String format(String string){
+//        char[] list = string.toCharArray();
+//        String finalString = "";
+//        for(int i = 0;i < list.length;i++){
+//            finalString = finalString + "§" + list[i];
+//        }
+//        return finalString;
+//    }
 }

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import static red.man10.man10economynote.EconomyNoteEvent.format;
+
 
 /**
  * Created by sho on 2017/12/15.
@@ -154,16 +156,16 @@ public class OPChequeCommand implements CommandExecutor {
         return ch;
     }
 
-    private String format(String string){
-        char[] list = string.toCharArray();
-        String finalString = "";
-        for(int i = 0;i < list.length;i++){
-            finalString = finalString + "§" + list[i];
-        }
-        return finalString.replaceAll("0","０").replaceAll("1","１")
-                .replaceAll("2","２").replaceAll("3","３")
-                .replaceAll("4","４").replaceAll("5","５")
-                .replaceAll("6","６").replaceAll("8","８")
-                .replaceAll("7","７").replaceAll("9","９");
-    }
+//    private String format(String string){
+//        char[] list = string.toCharArray();
+//        String finalString = "";
+//        for(int i = 0;i < list.length;i++){
+//            finalString = finalString + "§" + list[i];
+//        }
+//        return finalString.replaceAll("0","０").replaceAll("1","１")
+//                .replaceAll("2","２").replaceAll("3","３")
+//                .replaceAll("4","４").replaceAll("5","５")
+//                .replaceAll("6","６").replaceAll("8","８")
+//                .replaceAll("7","７").replaceAll("9","９");
+//    }
 }
