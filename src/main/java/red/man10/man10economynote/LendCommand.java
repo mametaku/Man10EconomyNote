@@ -91,9 +91,9 @@ public class LendCommand implements CommandExecutor {
                     p.sendMessage("§e[§dMan10EconNote§e]§c現在プレイヤーは借金の審議中です");
                     return false;
                 }
-                long finalValue = (long) (value + (value * plugin.tax));
-                if(plugin.vault.getBalance(p.getUniqueId()) < value + (value * plugin.tax)){
-                    p.sendMessage("§e[§dMan10EconNote§e]§b所持金が税金を足した" +  (value + (value * plugin.tax)) + "に達していません");
+                long finalValue = (long) (value + (value * Man10EconomyNote.tax));
+                if(Man10EconomyNote.vault.getBalance(p.getUniqueId()) < finalValue){
+                    p.sendMessage("§e[§dMan10EconNote§e]§b所持金が税金を足した" + finalValue + "に達していません");
                     return false;
                 }
                 long finalPayerValue = (long) (value + (value * finalIntrest));

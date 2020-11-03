@@ -276,7 +276,7 @@ public class EconomyNoteEvent implements Listener {
                                 Bukkit.getPlayer(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID).getInventory().addItem(ink);
 //                                pool.sendRemainderToCountry("PromissoryNote Tax Fee Send");
 
-                                if (vault.withdraw(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID,ld.baseValue)){
+                                if (vault.withdraw(plugin.sentLendDataDataHashMap.get(p.getUniqueId()).fromUUID,ld.finalValue)){
                                     vault.deposit(p.getUniqueId(),ld.baseValue);
                                 }
 

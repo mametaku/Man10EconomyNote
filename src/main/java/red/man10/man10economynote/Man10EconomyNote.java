@@ -31,7 +31,7 @@ public final class Man10EconomyNote extends JavaPlugin {
     public HashMap<Integer,LendData> lendDataCacheMap = new HashMap<>();
     
 
-    public double tax = 0.1;
+    public static double tax = 0.1;
 
     @Override
     public void onEnable() {
@@ -248,11 +248,7 @@ public final class Man10EconomyNote extends JavaPlugin {
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-            if(nd == null){
-                lendDataCacheMap.put(id, null);
-            }else{
-                lendDataCacheMap.put(id, nd);
-            }
+            lendDataCacheMap.put(id, nd);
         }
         return lendDataCacheMap.get(id);
     }
