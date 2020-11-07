@@ -3,6 +3,7 @@ package red.man10.man10economynote;
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import red.man10.man10offlinebank.BankAPI;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,6 +33,7 @@ public final class Man10EconomyNote extends JavaPlugin {
     
 
     public static double tax = 0.1;
+    public BankAPI bankAPI = new BankAPI(this);
 
     @Override
     public void onEnable() {
