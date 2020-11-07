@@ -1,8 +1,10 @@
 name: Man10EconomyNote
-version: ${project.version}
+version: 1.0
 main: red.man10.man10economynote.Man10EconomyNote
 authors: [Sho0]
-api-version: 1.13
+depend:
+ - Man10OfflineBank
+api-version: 1.16
 commands:
  mlend:
  mcheque:
